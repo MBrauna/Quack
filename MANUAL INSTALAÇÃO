@@ -1,0 +1,51 @@
+# ---------------------------------------------------------------------------------- #
+
+
+
+# Atualização de pacotes e python
+
+apt-get update
+apt-get upgrade
+apt-get install build-essential cmake pkg-config
+apt-get install python3
+apt-get install python3-pip
+apt-get install libx11-dev libatlas-base-dev
+apt-get install libgtk-3-dev libboost-python-dev
+
+# Atualização de pacotes e python
+
+
+
+# ---------------------------------------------------------------------------------- #
+
+
+pip3 install numpy
+pip3 install --upgrade setuptools
+pip3 install matplotlib
+pip3 install opencv-python
+pip3 install opencv-contrib-python
+pip3 install image
+pip3 install imageio
+pip3 install face-recognition
+pip3 install face-recognition-models
+pip3 install imutils
+pip3 install io
+pip3 install pillow
+pip3 install tensorflow
+pip3 install psycopg2
+pip3 install pymysql
+
+
+
+select e.id_elemento
+      ,e.descricao
+      ,cd.probabilidade
+      ,cd.id_camera_deteccao
+      ,cd.id_cam_deteccao_ant
+      ,cd.base64 as arquivo
+  from camera_deteccao cd
+       inner join elemento e
+           on cd.id_elemento = e.id_elemento
+ where cd.data_deteccao >= now() - interval '40 min'
+   and cd.probabilidade > 40
+ order by cd.id_camera_deteccao
