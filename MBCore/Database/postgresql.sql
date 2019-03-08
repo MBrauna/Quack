@@ -200,24 +200,24 @@ create index idx_camera_deteccao_idant    on camera_deteccao(id_cam_deteccao_ant
 
 
 
-
-
-
+-- TABELAS PARA MBServer
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
 CREATE TABLE cliente
 (
-   id_cliente integer NOT NULL, 
-   nome text NOT NULL, 
-   nome_fantasia text, 
-   cnpj_cpf integer, 
-   tipo_pessoa integer NOT NULL DEFAULT 0, 
-   data_cadastro timestamp without time zone NOT NULL DEFAULT now(), 
-   vip integer NOT NULL DEFAULT 0, 
-   admin integer NOT NULL DEFAULT 0, 
-   CONSTRAINT pk_cliente PRIMARY KEY (id_cliente), 
-   CONSTRAINT uk_cliente_cnpjcpf UNIQUE (cnpj_cpf), 
-   CONSTRAINT ck_cliente_vip CHECK (vip in (0,1)), 
-   CONSTRAINT ck_cliente_tppessoa CHECK (tipo_pessoa in (0,1)), 
-   CONSTRAINT ck_cliente_admin CHECK (admin in (0,1))
+   id_cliente       integer                     NOT NULL
+  ,nome             text                        NOT NULL
+  ,nome_fantasia    text
+  ,cnpj_cpf         integer
+  ,tipo_pessoa      integer                     NOT NULL DEFAULT 0
+  ,data_cadastro    timestamp without time zone NOT NULL DEFAULT now()
+  ,vip              integer                     NOT NULL DEFAULT 0
+  ,admin            integer                     NOT NULL DEFAULT 0
+  ,CONSTRAINT pk_cliente            PRIMARY KEY (id_cliente)
+  ,CONSTRAINT uk_cliente_cnpjcpf    UNIQUE (cnpj_cpf)
+  ,CONSTRAINT ck_cliente_vip        CHECK (vip in (0,1))
+  ,CONSTRAINT ck_cliente_tppessoa   CHECK (tipo_pessoa in (0,1))
+  ,CONSTRAINT ck_cliente_admin      CHECK (admin in (0,1))
 );
 
 
@@ -268,3 +268,55 @@ LANGUAGE plpgsql VOLATILE NOT LEAKPROOF;
 CREATE TRIGGER tg_biur_cliente BEFORE INSERT OR UPDATE OR DELETE
    ON public.cliente FOR EACH ROW
    EXECUTE PROCEDURE public.tg_ins_cliente();
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+CREATE TABLE sistema
+(
+   id_sistema           integer     NOT NULL
+   hash                 text        NOT NULL
+   ativo                integer     NOT NULL DEFAULT 0
+   descricao            text        NOT NULL
+   CONSTRAINT pk_sistema PRIMARY KEY (id_sistema)
+   CONSTRAINT uk_sistema_hash UNIQUE (hash)
+   CONSTRAINT ck_sistema_ativo CHECK (ativo in (0,1))
+);
+
+
+comment on column sistema.id_sistema    is 'Código sequencial - SISTEMAS DISPONÍVEIS';
+comment on column sistema.hash          is 'Código único para uso do sistema';
+comment on column sistema.ativo         is '[0] - Inativo, [1] - Ativo';
+comment on column sistema.descricao     is 'Descrição do sistema vigente';
+comment on table  sistema               is 'Sistemas MBrauna disponíveis para uso';
+
+create index idx_sistema_hash   on sistema(hash asc nulls last);
+create index idx_sistema_ativo  on sistema(ativo asc nulls last);
+
+
+CREATE FUNCTION public.tg_sistema() RETURNS trigger AS
+$BODY$begin
+  if (TG_OP = 'INSERT') then
+    new.id_sistema := nextval('seq_sistema');
+    new.hash       := md5(to_char(now(),'DDMMYYYYHH24MISS') || new.id_sistema);
+  elsif (TG_OP = 'UPDATE') then
+    new.id_sistema := old.id_sistema; -- Impede alteração do ID
+    new.hash       := old.hash;
+  else
+    RAISE INFO 'Não é possível remover o sistema %', now();
+  end if;
+
+  return new;
+end;$BODY$
+LANGUAGE plpgsql VOLATILE NOT LEAKPROOF;
+
+
+CREATE TRIGGER tg_biur_sistema BEFORE INSERT OR UPDATE OR DELETE
+   ON public.sistema FOR EACH ROW
+   EXECUTE PROCEDURE public.tg_sistema();
