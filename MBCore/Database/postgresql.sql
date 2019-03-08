@@ -199,10 +199,12 @@ create index idx_camera_deteccao_idant    on camera_deteccao(id_cam_deteccao_ant
 
 
 
-
--- TABELAS PARA MBServer
 ----------------------------------------------------------------------------
 ----------------------------------------------------------------------------
+--                          TABELAS PARA MBServer                         --
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+create sequence seq_cliente increment 1 start 1 minvalue 1 maxvalue 999999999;
 CREATE TABLE cliente
 (
    id_cliente       integer                     NOT NULL
@@ -278,6 +280,7 @@ CREATE TRIGGER tg_biur_cliente BEFORE INSERT OR UPDATE OR DELETE
 
 ----------------------------------------------------------------------------
 ----------------------------------------------------------------------------
+create sequence seq_sistema increment 1 start 1 minvalue 1 maxvalue 999999999;
 CREATE TABLE sistema
 (
    id_sistema           integer     NOT NULL
@@ -320,3 +323,96 @@ LANGUAGE plpgsql VOLATILE NOT LEAKPROOF;
 CREATE TRIGGER tg_biur_sistema BEFORE INSERT OR UPDATE OR DELETE
    ON public.sistema FOR EACH ROW
    EXECUTE PROCEDURE public.tg_sistema();
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+create sequence seq_elemento increment 1 start 1 minvalue 1 maxvalue 999999999;
+create table elemento
+(
+    id_elemento         integer     not null    default nextval('seq_elemento')
+   ,descricao           text        not null    default 'ELEMENTO INVÁLIDO'
+   ,item_nome           text        not null    default '00000000'
+   ,ativo               integer     not null    default 0
+   ,primary key(id_elemento)
+   ,constraint ck_elemento_ativo        check (ativo in (0,1))
+   ,constraint uk_elemento_itemnome     unique (item_nome)
+);
+comment on column elemento.id_elemento  is 'Código único para referência do elemento';
+comment on column elemento.descricao    is 'Descrição visual do elemento';
+comment on column elemento.item_nome    is 'Referência do item em MBraunaCore';
+comment on column elemento.ativo        is '[0] - Inativo, [1] - Ativo';
+
+create index idx_elemento_desc          on elemento(descricao asc nulls last);
+create index idx_elemento_itemnome      on elemento(item_nome asc nulls last);
+create index idx_elemento_ativo         on elemento(ativo asc nulls last);
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+create sequence seq_sistema_acesso increment 1 start 1 minvalue 1 maxvalue 999999999;
+create table public.sistema_acesso
+(
+  ,id_sistema_acesso        integer     not null
+  ,chave_acesso             text        not null
+  ,id_cliente               integer     not null
+  ,id_sistema               integer     not null
+  ,situacao                 integer     not null default 0
+  constraint pk_sistema_acesso              primary key (id_sistema_acesso),
+  constraint fk_sistema_acesso_idcliente    foreign key (id_cliente) references public.cliente (id_cliente) match simple on update no action on delete no action,
+  constraint fk_sistema_acesso_idsistema    foreign key (id_sistema) references public.sistema (id_sistema) match simple on update no action on delete no action,
+  constraint ck_sistema_acesso_situacao     check (situacao = any (array[0, 1]))
+);
+
+comment on table  sistema_acesso                     is 'Tabela de liberação de acessos por período';
+comment on column sistema_acesso.id_sistema_acesso   is 'Código sequencial - Dado único para acesso ao sistema';
+comment on column sistema_acesso.chave_acesso        is 'Chave de acesso ao sistema - Através desta chave os dados serão atualizados em MBCore';
+comment on column sistema_acesso.id_cliente          is 'Chave de referência aos dados do cliente';
+comment on column sistema_acesso.id_sistema          is 'Código de referência ao sistema';
+comment on column sistema_acesso.situacao            is '[0] - Inativo, [1] - Ativo';
+
+CREATE FUNCTION public.tg_sistema_acesso() RETURNS trigger AS
+$BODY$declare
+  v_contador integer;
+begin
+  select count(1)
+    into v_contador
+    from sistema_acesso sa
+   where sa.id_cliente   = new.id_cliente
+     and sa.id_sistema   = new.id_sistema
+     and sa.sistuacao    = 1
+        ;
+
+  if v_contador > 0 then
+    raise info 'Já existe um registro definido para o cliente %! Verifique.', new.id_cliente;
+  end if;
+
+  if (TG_OP = 'INSERT') then
+    new.id_sistema_acesso := nextval('seq_sistema_acesso');
+    new.chave_acesso      := md5(to_char(now(),'DDMMYYYYHH24MISS') || new.id_sistema_acesso);
+  elsif (TG_OP = 'UPDATE') then
+    new.id_sistema_acesso := old.id_sistema_acesso;
+    new.chave_acesso      := old.chave_acesso;
+    new.id_cliente        := old.id_cliente;
+    new.id_sistema        := old.id_sistema;
+  else
+    raise info 'Não é possível remover o registro SISTEMA_ACESSO %', now();
+  end if;
+end;$BODY$
+LANGUAGE plpgsql VOLATILE NOT LEAKPROOF;
+
+CREATE TRIGGER tg_biur_sistema_acesso BEFORE INSERT OR UPDATE OR DELETE
+   ON public.sistema_acesso FOR EACH ROW
+   EXECUTE PROCEDURE public.tg_sistema_acesso();
