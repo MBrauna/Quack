@@ -32,7 +32,54 @@ from    time                            import gmtime, strftime
 
 class quackserver:
     # Declaração de variáveis globais da aplicação
-    QUACK_CONFIG    =   None
+    QUACK_CONFIG    =   {
+                            #######################################
+                            # Regras de conexão ao banco de dados #
+                            #######################################
+                            'DB'        :   {
+                                                'Tipo'          :   0
+                                               ,'Hospedeiro'    :   'localhost'
+                                               ,'Porta'         :   5432
+                                               ,'Banco'         :   'quack'
+                                               ,'Usuario'       :   'quackserver'
+                                               ,'Senha'         :   'Qu4ck!s3rv3r!'
+                                            }
+                            #######################################
+                            #    Instâncias para uso em Quack.    #
+                            #######################################
+                           ,'Quack'     :   {
+                                                'DB'            :   None
+                                               ,'Visao'         :   None
+                                            }
+                            #######################################
+                            #  Lista de valores globais de query  #
+                            #######################################
+                           ,'Lista'     :   {
+                                                'Camera'        :   [
+                                                                        # Estrutura dos dados de câmera serão
+                                                                        # [0] - Nome da câmera
+                                                                        # [1] - Endereço da câmera
+                                                                        # [2] - Ponto de corte
+                                                                        ['WebCam Local',0,50]
+                                                                    ]
+                                                # Lista de elementos que serão detectados.
+                                               ,'Elementos'     :   []
+                                            }
+                            #######################################
+                            #  Chaves de acesso ao sistema Quack  #
+                            #######################################
+                           ,'Chave'     :   {
+                                                'Acesso'        :   'abcdefghijklmnopqrstuvwxyz'
+                                               ,'ID'            :   0
+                                               ,'Sistema'       :   'abcdefghijklmnopqrstuvwxyz'
+                                            }
+                            #######################################
+                            #              Diretório              #
+                            #######################################
+                           ,'Diretorio' :   {
+                                                'Log'           :   './'
+                                            }
+                        }
     # Declaração de variáveis globais da aplicação
 
 
@@ -60,55 +107,6 @@ class quackserver:
     def __init__(self):
         # Carrega as configurações para QUACK
         try:
-            self.QUACK_CONFIG   =   {
-                                        #######################################
-                                        # Regras de conexão ao banco de dados #
-                                        #######################################
-                                        'DB'        :   {
-                                                            'Tipo'          :   0
-                                                           ,'Hospedeiro'    :   'localhost'
-                                                           ,'Porta'         :   5432
-                                                           ,'Banco'         :   'quack'
-                                                           ,'Usuario'       :   'quackserver'
-                                                           ,'Senha'         :   'Qu4ck!s3rv3r!'
-                                                        }
-                                        #######################################
-                                        #    Instâncias para uso em Quack.    #
-                                        #######################################
-                                       ,'Quack'     :   {
-                                                            'DB'            :   None
-                                                           ,'Visao'         :   None
-                                                        }
-                                        #######################################
-                                        #  Lista de valores globais de query  #
-                                        #######################################
-                                       ,'Lista'     :   {
-                                                            'Camera'        :   [
-                                                                                    # Estrutura dos dados de câmera serão
-                                                                                    # [0] - Nome da câmera
-                                                                                    # [1] - Endereço da câmera
-                                                                                    # [2] - Ponto de corte
-                                                                                    ['WebCam Local',0,50]
-                                                                                ]
-                                                            # Lista de elementos que serão detectados.
-                                                           ,'Elementos'     :   []
-                                                        }
-                                        #######################################
-                                        #  Chaves de acesso ao sistema Quack  #
-                                        #######################################
-                                       ,'Chave'     :   {
-                                                            'Acesso'        :   'abcdefghijklmnopqrstuvwxyz'
-                                                           ,'ID'            :   0
-                                                           ,'Sistema'       :   'abcdefghijklmnopqrstuvwxyz'
-                                                        }
-                                        #######################################
-                                        #              Diretório              #
-                                        #######################################
-                                       ,'Diretorio' :   {
-                                                            'Log'           :   './'
-                                                        }
-                                    }
-
             # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- #
 
             # Validações necessárias para composição dos dados do banco de dados
@@ -178,7 +176,7 @@ class quackserver:
 
             # Para caminho do diretório de log - Quack
             if self.valida_alfanumerico(config.QUACK_DIRETORIO_LOG):
-                print('1-'+config.QUACK_DIRETORIO_LOG)
+                self.QUACK_CONFIG['Diretorio']['Log']   =   config.QUACK_DIRETORIO_LOG
             # Para caminho do diretório de log - Quack
             # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- #
         except Exception as p_erro:
@@ -248,11 +246,11 @@ class quackserver:
     def quack_arquivo_log(self, p_mensagem):
         try:
             # Verifica se o diretório informado existe #
-            if not os.path.isfile(self.QUACK_CONFIG['Diretorio']['Log']):
+            if not os.path.exists(self.QUACK_CONFIG['Diretorio']['Log']):
                 os.mkdir(self.QUACK_CONFIG['Diretorio']['Log'])
 
             vquack_log  =   open(self.QUACK_CONFIG['Diretorio']['Log'] + "QuackLOG" + strftime("%Y%m%d", gmtime()) +".log", "a+")
-            vquack_log.write(p_mensagem + '\n')
+            vquack_log.write(strftime("%d/%m/%Y %H:%M:%S", gmtime()) + p_mensagem + '\n')
             vquack_log.close()
         except Exception as p_erro:
             # Mais detalhes sobre o erro
@@ -278,3 +276,27 @@ class quackserver:
             print()
             self.quack_arquivo_log(vtmp_mensagem)            
     # Inicialização do DB - QuackDB
+
+    # --------------------------------------------------------------- #
+
+    # Consulta todos os dados de câmeras, caso exista - Se não existir ... seta o filtro padrão
+    def lista_cameras(self):
+        try:
+            pass
+        except Exception as e:
+            raise e
+    # Consulta todos os dados de câmeras, caso exista - Se não existir ... seta o filtro padrão
+
+
+
+    # ---------------------------------------------------------------- #
+    #             PROCEDIMENTOS PRINCIPAIS AO QUACK SERVER             #
+    # ---------------------------------------------------------------- #
+
+    # Método de execução para QuackServer - Inicializa a visão e separa os canais
+    # Método de execução para QuackServer - Inicializa a visão e separa os canais
+
+
+    # ---------------------------------------------------------------- #
+    #             PROCEDIMENTOS PRINCIPAIS AO QUACK SERVER             #
+    # ---------------------------------------------------------------- #
