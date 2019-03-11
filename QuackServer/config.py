@@ -31,14 +31,15 @@ DA CONFIGURAÇÃO (#).
 QUACK_DB_TIPO           =   0
 QUACK_DB_HOSPEDEIRO     =   'localhost'
 QUACK_DB_PORTA          =   5432
-QUACK_DB_USUARIO        =   'Quack'
-QUACK_DB_SENHA          =   'QuackServer'
-QUACK_DB_BANCO          =   'QuackDB'
+QUACK_DB_USUARIO        =   'postgres'
+QUACK_DB_SENHA          =   'ABC123abc.'
+QUACK_DB_BANCO          =   'quackserver'
 
 ##########################################################################
 #                       CHAVES DE ACESSO AO SISTEMA                      #
 ##########################################################################
-QUACK_CHAVE_SISTEMA     =   'ee11006d08568a0fd0512fe2b6f1cac7'
+QUACK_CHAVE_SISTEMA     =   'ef52324ea4beda63e1646578dd26e158'
+
 QUACK_ID_USUARIO        =   1
 QUACK_CHAVE_USUARIO     =   '230c53159c2a469318eda4ab2c5ace58'
 

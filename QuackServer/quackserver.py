@@ -188,7 +188,9 @@ class quackserver:
         # Consulta externamente os dados para composição do QuackServer
         try:
             # Inicializa o DB
-            self.inicializacao_DB()
+            if not self.inicializacao_DB():
+                raise Exception('erro db')
+
 
             if self.QUACK_CONFIG['Quack']['DB'] is None:
                 raise ValueError('[QUACKSERVER][CONFIG][DB] Não foi possível carregar o banco de dados! Verifique.')
@@ -267,14 +269,16 @@ class quackserver:
     def inicializacao_DB(self):
         # Carrega a lista de informações
         try:
-            self.QUACK_CONFIG['Quack']['DB']     =   quackdb(self.QUACK_CONFIG)
+            self.QUACK_CONFIG['Quack']['DB']    =   quackdb(self.QUACK_CONFIG)
         except Exception as p_erro:
-            vtmp_mensagem                   =   '[QUACKSERVER][INICIALIZACAODB] - Não foi possível inicializar o banco de dados em ' + strftime("%d/%m/%Y %H:%M:%S", gmtime()) + '\n [ERRO DB] ' + str(p_erro)
+            vtmp_mensagem                       =   '[QUACKSERVER][INICIALIZACAODB] - Não foi possível inicializar o banco de dados em ' + strftime("%d/%m/%Y %H:%M:%S", gmtime()) + '\n [ERRO DB] ' + str(p_erro)
+            vtmp_retorno                        =   False
         else:
-            vtmp_mensagem                   =   '[QUACKSERVER][INICIALIZACAODB] - Banco de dados inicializado em ' + strftime("%d/%m/%Y %H:%M:%S", gmtime())
+            vtmp_mensagem                       =   '[QUACKSERVER][INICIALIZACAODB] - Banco de dados inicializado em ' + strftime("%d/%m/%Y %H:%M:%S", gmtime())
+            vtmp_retorno                        =   True
         finally:
-            print()
-            self.quack_arquivo_log(vtmp_mensagem)            
+            self.quack_arquivo_log(vtmp_mensagem)
+            return vtmp_retorno
     # Inicialização do DB - QuackDB
 
     # --------------------------------------------------------------- #

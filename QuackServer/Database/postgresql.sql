@@ -272,3 +272,27 @@ LANGUAGE plpgsql VOLATILE NOT LEAKPROOF;
 CREATE TRIGGER tg_biur_identificador BEFORE INSERT OR UPDATE
    ON public.identificador FOR EACH ROW
    EXECUTE PROCEDURE public.tg_identificador();
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+create sequence seq_lista_camera increment 1 start 1 minvalue 1 maxvalue 9999999999;
+
+create table lista_camera
+(
+    id_lista_camera     integer   not null
+   ,id_sistema_acesso   integer   not null
+   ,url_camera          text      not null
+   ,ponto_corte         integer   not null default 30
+   ,situacao            integer   not null default 1
+   ,primary key(id_lista_camera)
+   ,constraint fk_lista_camera_sisac foreign key (id_sistema_acesso) references sistema_acesso(id_sistema_acesso)
+   ,constraint uk_lista_camera_sisac unique(id_sistema_acesso,url_camera)
+);
+
