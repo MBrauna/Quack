@@ -79,326 +79,6 @@ CREATE TRIGGER tg_biur_cliente BEFORE INSERT OR UPDATE OR DELETE
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-----------------------------------------------------------------------------
-----------------------------------------------------------------------------
---                          TABELAS PARA MBServer                         --
-----------------------------------------------------------------------------
-----------------------------------------------------------------------------
-create sequence seq_cliente increment 1 start 1 minvalue 1 maxvalue 999999999;
-CREATE TABLE cliente
-(
-   id_cliente       integer                     NOT NULL
-  ,nome             text                        NOT NULL
-  ,nome_fantasia    text
-  ,cnpj_cpf         integer
-  ,tipo_pessoa      integer                     NOT NULL DEFAULT 0
-  ,data_cadastro    timestamp without time zone NOT NULL DEFAULT now()
-  ,vip              integer                     NOT NULL DEFAULT 0
-  ,admin            integer                     NOT NULL DEFAULT 0
-  ,CONSTRAINT pk_cliente            PRIMARY KEY (id_cliente)
-  ,CONSTRAINT uk_cliente_cnpjcpf    UNIQUE (cnpj_cpf)
-  ,CONSTRAINT ck_cliente_vip        CHECK (vip in (0,1))
-  ,CONSTRAINT ck_cliente_tppessoa   CHECK (tipo_pessoa in (0,1))
-  ,CONSTRAINT ck_cliente_admin      CHECK (admin in (0,1))
-);
-
-
-comment on column cliente.id_cliente     is 'Código único - SEQUENCIAL DO CLIENTE';
-comment on column cliente.nome           is 'Nome do cliente - Se pessoa jurídica nome real.';
-comment on column cliente.nome_fantasia  is 'Nome fantasia ou apelido do cliente';
-comment on column cliente.cnpj_cpf       is 'Código de cadastro à receita federal';
-comment on column cliente.tipo_pessoa    is '[0] - Pessoa física, [1] - Pessoa Jurídica';
-comment on column cliente.vip            is '[0] - Não, [1] - Sim';
-comment on column cliente.admin          is '[0] - Não, [1] - Sim';
-comment on table  cliente                is 'Tabela de clientes - Toda pessoa física ou jurídica que por algum motivo iteragir com a aplicação deverá ser cadastrada nesta tabela';
-
-
-create index idx_cliente_nome          on cliente(nome asc nulls last);
-create index idx_cliente_cnpj_cpf      on cliente(cnpj_cpf asc nulls last);
-create index idx_cliente_tpessoa       on cliente(tipo_pessoa asc nulls last);
-create index idx_cliente_dtcadastro    on cliente(data_cadastro asc nulls last);
-create index idx_cliente_admin         on cliente(admin asc nulls last);
-create index idx_cliente_vip           on cliente(vip asc nulls last);
-
-CREATE FUNCTION public.tg_ins_cliente() RETURNS trigger AS
-$BODY$
-declare
-begin
-  if (TG_OP = 'INSERT') then
-    new.id_cliente    := nextval('seq_cliente');
-    new.data_cadastro := now();
-
-    if new.tipo_pessoa is null then
-      if length(new.cnpj_cpf) <= 11 then
-        new.tipo_pessoa := 0; -- [0] - Pessoa física
-      else
-        new.tipo_pessoa := 1; -- [1] - Pessoa Jurídica
-      end if; -- if length(new.cnpj_cpf) <= 11 then
-    end if; -- if new.tipo_pessoa is null then
-    
-  elsif (TG_OP = 'UPDATE') then
-    new.id_cliente    := old.id_cliente;
-    new.data_cadastro := old.data_cadastro;
-  elsif (TG_OP = 'DELETE') then
-    RAISE INFO 'Não é possível remover o cliente %', now();
-  end if;
-
-  return new;
-end;$BODY$
-LANGUAGE plpgsql VOLATILE NOT LEAKPROOF;
-
-CREATE TRIGGER tg_biur_cliente BEFORE INSERT OR UPDATE OR DELETE
-   ON public.cliente FOR EACH ROW
-   EXECUTE PROCEDURE public.tg_ins_cliente();
-
-
-
-
-
-
-
-
 ----------------------------------------------------------------------------
 ----------------------------------------------------------------------------
 create sequence seq_sistema increment 1 start 1 minvalue 1 maxvalue 999999999;
@@ -484,7 +164,7 @@ create index idx_elemento_ativo         on elemento(ativo asc nulls last);
 ----------------------------------------------------------------------------
 ----------------------------------------------------------------------------
 create sequence seq_sistema_acesso increment 1 start 1 minvalue 1 maxvalue 999999999;
-create table public.sistema_acesso
+create table sistema_acesso
 (
    id_sistema_acesso        integer     not null
   ,chave_acesso             text        not null
@@ -503,6 +183,12 @@ comment on column sistema_acesso.chave_acesso        is 'Chave de acesso ao sist
 comment on column sistema_acesso.id_cliente          is 'Chave de referência aos dados do cliente';
 comment on column sistema_acesso.id_sistema          is 'Código de referência ao sistema';
 comment on column sistema_acesso.situacao            is '[0] - Inativo, [1] - Ativo';
+
+create index idx_sistema_acesso_hash    on sistema_acesso(chave_acesso asc nulls last);
+create index idx_sistema_acesso_cli     on sistema_acesso(id_cliente asc nulls last);
+create index idx_sistema_acesso_sis     on sistema_acesso(id_sistema asc nulls last);
+create index idx_sistema_acesso_sit     on sistema_acesso(situacao asc nulls last);
+
 
 CREATE FUNCTION public.tg_sistema_acesso() RETURNS trigger AS
 $BODY$declare
@@ -531,9 +217,58 @@ begin
   else
     raise info 'Não é possível remover o registro SISTEMA_ACESSO %', now();
   end if;
+
+  return new;
 end;$BODY$
 LANGUAGE plpgsql VOLATILE NOT LEAKPROOF;
 
 CREATE TRIGGER tg_biur_sistema_acesso BEFORE INSERT OR UPDATE OR DELETE
    ON public.sistema_acesso FOR EACH ROW
    EXECUTE PROCEDURE public.tg_sistema_acesso();
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+create sequence seq_identificador increment 1 start 1 minvalue 1 maxvalue 999999999;
+
+create table identificador
+(
+    id_identificador    integer     not null
+   ,descricao           text                    default 'Sem descrição'
+   ,nome_exibicao       text        not null
+   ,data_cadastro       timestamp   not null    default now()
+   ,primary key(id_identificador)
+);
+
+comment on column identificador.id_identificador    is 'Código sequencial único de identificação';
+comment on column identificador.descricao           is 'Descrição do elemento registrado';
+comment on column identificador.nome_exibicao       is 'Nome que será exibido nos logs e registros de detecção';
+
+create index idx_identificador_nome                 on identificador(nome_exibicao asc nulls last);
+create index idx_identificador_dtcat                on identificador(data_cadastro asc nulls last);
+
+
+CREATE FUNCTION public.tg_identificador() RETURNS trigger AS
+$BODY$begin
+  if (TG_OP = 'INSERT') then
+    new.id_identificador := nextval('seq_identificador');
+    new.data_cadastro    := now();
+  elsif (TG_OP = 'UPDATE') then
+    new.id_identificador := old.id_identificador;
+    new.data_cadastro    := old.data_cadastro;
+  else
+    raise info 'Não foi possível realizar a operação! %', now();
+  end if;
+end;$BODY$
+LANGUAGE plpgsql VOLATILE NOT LEAKPROOF;
+
+
+CREATE TRIGGER tg_biur_identificador BEFORE INSERT OR UPDATE
+   ON public.identificador FOR EACH ROW
+   EXECUTE PROCEDURE public.tg_identificador();

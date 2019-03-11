@@ -26,7 +26,7 @@ DA CONFIGURAÇÃO (#).
 [2] -   MongoDB
 [3] -   SQL Server
 [4] -   Oracle
-[5] -   Cassandra
+[5] -   Cassandra 
 '''
 QUACK_DB_TIPO           =   0
 QUACK_DB_HOSPEDEIRO     =   'localhost'
@@ -38,9 +38,9 @@ QUACK_DB_BANCO          =   'QuackDB'
 ##########################################################################
 #                       CHAVES DE ACESSO AO SISTEMA                      #
 ##########################################################################
-QUACK_CHAVE_ACESSO      =   'ee11006d08568a0fd0512fe2b6f1cac7'
-QUACK_CHAVE_USUARIO     =   'ee11006d08568a0fd0512fe2b6f1cac7'
+QUACK_CHAVE_SISTEMA     =   'ee11006d08568a0fd0512fe2b6f1cac7'
 QUACK_ID_USUARIO        =   1
+QUACK_CHAVE_USUARIO     =   '230c53159c2a469318eda4ab2c5ace58'
 
 ##########################################################################
 #              MARGEM DE ERRO DO RASTREIO - POR COORDENADAS              #
