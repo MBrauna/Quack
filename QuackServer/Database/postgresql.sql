@@ -295,4 +295,3 @@ create table lista_camera
    ,constraint fk_lista_camera_sisac foreign key (id_sistema_acesso) references sistema_acesso(id_sistema_acesso)
    ,constraint uk_lista_camera_sisac unique(id_sistema_acesso,url_camera)
 );
-

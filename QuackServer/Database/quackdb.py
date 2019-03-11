@@ -24,6 +24,7 @@ from    time                            import gmtime, strftime
 
 
 class quackdb:
+    quack_conexao   =   None
     # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- #
 
     # Inicializa o modelo QuackDB - Modelo Quack
@@ -31,7 +32,7 @@ class quackdb:
         try:
             # Carrega os dados à partir da conexão necessária
             if p_configuracao['DB']['Tipo']     ==  0:
-                vdb_conexao         =   psycopg2.connect(host       =   p_configuracao['DB']['Hospedeiro']
+                self.quack_conexao  =   psycopg2.connect(host       =   p_configuracao['DB']['Hospedeiro']
                                                         ,port       =   p_configuracao['DB']['Porta']
                                                         ,user       =   p_configuracao['DB']['Usuario']
                                                         ,password   =   p_configuracao['DB']['Senha']
@@ -39,15 +40,13 @@ class quackdb:
                                                         )
 
             elif p_configuracao['DB']['Tipo']   ==  1:
-                vdb_conexao         =   pymysql.connect(host        =   p_configuracao['DB']['Hospedeiro']
+                self.quack_conexao  =   pymysql.connect(host        =   p_configuracao['DB']['Hospedeiro']
                                                        ,port        =   p_configuracao['DB']['Porta']
                                                        ,user        =   p_configuracao['DB']['Usuario']
                                                        ,passwd      =   p_configuracao['DB']['Senha']
                                                        ,db          =   p_configuracao['DB']['Banco']
                                                        )
             # Carrega os dados à partir da conexão necessária
-
-            return vdb_conexao
         except Exception as p_erro:
             # Mais detalhes sobre o erro
             ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
@@ -55,7 +54,6 @@ class quackdb:
             # Mais detalhes sobre o erro
             vtmp_mensagem   =   '[QUACKDB][INIT][ERRO] - Ocorreu um erro ao executar o procedimento [' + str(ecx_dados.tb_lineno) + '] - ' + str(p_erro)
             self.quack_arquivo_log(p_configuracao, vtmp_mensagem)
-            return None
     # Inicializa o modelo QuackDB - Modelo Quack
 
     # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- #
@@ -64,7 +62,7 @@ class quackdb:
     def realiza_consulta(self, p_configuracao, p_consulta):
         try:
             # Abre uma sessão no banco de dados
-            vtmp_sessao     =   p_configuracao['Quack']['DB'].cursor()
+            vtmp_sessao     =   self.quack_conexao.cursor()
             # Abre uma sessão no banco de dados
 
             # Executa a DDL
@@ -94,7 +92,7 @@ class quackdb:
     def executa_procedimento(self, p_configuracao, p_comando):
         try:
             # Abre uma sessão no banco de dados
-            vtmp_sessao     =   p_configuracao['Quack']['DB'].cursor()
+            vtmp_sessao     =   self.quack_conexao.cursor()
             # Abre uma sessão no banco de dados
 
             # Executa a DDL

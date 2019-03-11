@@ -189,16 +189,24 @@ class quackserver:
         try:
             # Inicializa o DB
             if not self.inicializacao_DB():
-                raise Exception('erro db')
+                raise ValueError('[QUACKSERVER][CONFIG][DB] Não foi possível carregar o banco de dados! Verifique.')
 
 
             if self.QUACK_CONFIG['Quack']['DB'] is None:
                 raise ValueError('[QUACKSERVER][CONFIG][DB] Não foi possível carregar o banco de dados! Verifique.')
-        except Exception as e:
+        except Exception as p_erro:
+            # Mais detalhes sobre o erro
+            ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
+            ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
             vtmp_mensagem   =   '[QUACKSERVER][CONFIG]['+ str(ecx_dados.tb_lineno) + '] - Banco de dados indisponível! Verifique erro.' + str(p_erro)
             self.quack_arquivo_log(vtmp_mensagem)
             sys.exit()
-        except ValueError as e:
+        except ValueError as p_erro:
+            # Mais detalhes sobre o erro
+            ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
+            ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
+            vtmp_mensagem   =   '[QUACKSERVER][CONFIG]['+ str(ecx_dados.tb_lineno) + '] - Banco de dados indisponível! Verifique erro.' + str(p_erro)
+            self.quack_arquivo_log(vtmp_mensagem)
             sys.exit()
         # Consulta externamente os dados para composição do QuackServer
     # Método de inicialização Quack Server - __INIT__
@@ -286,9 +294,19 @@ class quackserver:
     # Consulta todos os dados de câmeras, caso exista - Se não existir ... seta o filtro padrão
     def lista_cameras(self):
         try:
-            pass
-        except Exception as e:
-            raise e
+            vtmp_consulta   =   "select c.nome as nome_cliente ,c.nome_fantasia as nome_fantasia ,c.chave_acesso as cliente_chave ,sa.chave_acesso as sistema_chave, s.id_sistema as id_sistema ,s.descricao as sistema_descricao ,sa.id_sistema_acesso as id_sistema_acesso ,la.id_lista_camera as id_lista_camera ,la.url_camera as url_camera ,la.ponto_corte as ponto_corte from cliente c inner join sistema_acesso sa on sa.id_cliente = c.id_cliente inner join sistema s on s.id_sistema = sa.id_sistema inner join lista_camera la on la.id_sistema_acesso = sa.id_sistema_acesso where s.ativo = 1 and sa.situacao = 1 and la.situacao = 1 and c.id_cliente = '" + self.QUACK_CONFIG['Chave']['ID'] + "' and c.chave_acesso = '" + self.QUACK_CONFIG['Chave']['Acesso'] + "' and sa.chave_acesso = '" + self.QUACK_CONFIG['Chave']['Sistema']
+            vtmp_resultado  =   self.QUACK_CONFIG['Quack']['DB'].realiza_consulta(self.QUACK_CONFIG, vtmp_consulta)
+
+            if vtmp_resultado:
+                self.QUACK_CONFIG['Lista']['Camera']    =   vtmp_resultado
+        except Exception as p_erro:
+            # Mais detalhes sobre o erro
+            ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
+            ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
+            # Mais detalhes sobre o erro
+            vtmp_mensagem   =   '[QUACKSERVER][LISTACAMERA][ERRO][' + str(ecx_dados.tb_lineno) + '] - ' + str(p_erro)
+            self.quack_arquivo_log(vtmp_mensagem)
+            return False
     # Consulta todos os dados de câmeras, caso exista - Se não existir ... seta o filtro padrão
 
 
