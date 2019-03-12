@@ -17,8 +17,9 @@ import  sys
 
 
 
-from    Database.quackdb                import quackdb
-from    time                            import gmtime, strftime
+from    Database.quackdb                import  quackdb
+from    Visao.quackvisao                import  visao
+from    time                            import  gmtime, strftime
 # Carrega as bibliotecas para MBrauna Core
 
 
@@ -180,7 +181,7 @@ class quackserver:
             # Para caminho do diretório de log - Quack
             # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- #
         except Exception as p_erro:
-            vtmp_mensagem   =   '[QUACKSERVER][CONFIG]['+ str(ecx_dados.tb_lineno) + '] - Não foi possível o carregamento das configurações! Verifique.' + str(p_erro)
+            vtmp_mensagem   =   '[QUACKSERVER][CONFIG]['+ str(ecx_dados.tb_lineno) + '] - Não foi possível o carregamento das configurações! Verifique.' + str(p_erro) + ' | -- | ' + str(ecx_tipo) + ' | -- | ' + str(ecx_dados)  + ' | -- | ' + str(ecx_nome)
             self.quack_arquivo_log(vtmp_mensagem)
             sys.exit()
         # Carrega as configurações para QUACK
@@ -191,21 +192,26 @@ class quackserver:
             if not self.inicializacao_DB():
                 raise ValueError('[QUACKSERVER][CONFIG][DB] Não foi possível carregar o banco de dados! Verifique.')
 
-
             if self.QUACK_CONFIG['Quack']['DB'] is None:
                 raise ValueError('[QUACKSERVER][CONFIG][DB] Não foi possível carregar o banco de dados! Verifique.')
+
+            if not self.inicializacao_visao():
+                raise ValueError('[QUACKSERVER][CONFIG][VISAO] Não foi possível carregar Quack Visao! Verifique.')
+
+            if self.QUACK_CONFIG['Quack']['Visao'] is None:
+                raise ValueError('[QUACKSERVER][CONFIG][VISAO] Não foi possível carregar Quack Visao! Verifique.')
         except Exception as p_erro:
             # Mais detalhes sobre o erro
             ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
             ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
-            vtmp_mensagem   =   '[QUACKSERVER][CONFIG]['+ str(ecx_dados.tb_lineno) + '] - Banco de dados indisponível! Verifique erro.' + str(p_erro)
+            vtmp_mensagem   =   '['+ str(ecx_dados.tb_lineno) + '] - ' + str(p_erro) + ' | -- | ' + str(ecx_tipo) + ' | -- | ' + str(ecx_dados)  + ' | -- | ' + str(ecx_nome)
             self.quack_arquivo_log(vtmp_mensagem)
             sys.exit()
         except ValueError as p_erro:
             # Mais detalhes sobre o erro
             ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
             ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
-            vtmp_mensagem   =   '[QUACKSERVER][CONFIG]['+ str(ecx_dados.tb_lineno) + '] - Banco de dados indisponível! Verifique erro.' + str(p_erro)
+            vtmp_mensagem   =   '['+ str(ecx_dados.tb_lineno) + '] - ' + str(p_erro) + ' | -- | ' + str(ecx_tipo) + ' | -- | ' + str(ecx_dados)  + ' | -- | ' + str(ecx_nome)
             self.quack_arquivo_log(vtmp_mensagem)
             sys.exit()
         # Consulta externamente os dados para composição do QuackServer
@@ -225,7 +231,7 @@ class quackserver:
             ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
             ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
 
-            vtmp_erro   =   '[CORE][VALIDANUMERICO][ERRO][' + str(ecx_dados.tb_lineno) + '] - ' + str(p_erro)
+            vtmp_erro   =   '[CORE][VALIDANUMERICO][ERRO][' + str(ecx_dados.tb_lineno) + '] - ' + str(p_erro) + ' | -- | ' + str(ecx_tipo) + ' | -- | ' + str(ecx_dados)  + ' | -- | ' + str(ecx_nome)
             self.quack_arquivo_log(vtmp_erro)
             return False
     # Método de suporte QUACK - Validação de dados numéricos
@@ -244,7 +250,7 @@ class quackserver:
             ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
             ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
 
-            vtmp_erro   =   '[CORE][VALIDAALFANUMERICO][ERRO][' + str(ecx_dados.tb_lineno) + '] - ' + str(p_erro)
+            vtmp_erro   =   '[CORE][VALIDAALFANUMERICO][ERRO][' + str(ecx_dados.tb_lineno) + '] - ' + str(p_erro) + ' | -- | ' + str(ecx_tipo) + ' | -- | ' + str(ecx_dados)  + ' | -- | ' + str(ecx_nome)
             self.quack_arquivo_log(vtmp_erro)
 
             return False
@@ -279,7 +285,7 @@ class quackserver:
         try:
             self.QUACK_CONFIG['Quack']['DB']    =   quackdb(self.QUACK_CONFIG)
         except Exception as p_erro:
-            vtmp_mensagem                       =   '[QUACKSERVER][INICIALIZACAODB] - Não foi possível inicializar o banco de dados em ' + strftime("%d/%m/%Y %H:%M:%S", gmtime()) + '\n [ERRO DB] ' + str(p_erro)
+            vtmp_mensagem                       =   '[QUACKSERVER][INICIALIZACAODB] - Não foi possível inicializar o banco de dados em ' + strftime("%d/%m/%Y %H:%M:%S", gmtime()) + '\n [ERRO DB] ' + str(p_erro) + ' | -- | ' + str(ecx_tipo) + ' | -- | ' + str(ecx_dados)  + ' | -- | ' + str(ecx_nome)
             vtmp_retorno                        =   False
         else:
             vtmp_mensagem                       =   '[QUACKSERVER][INICIALIZACAODB] - Banco de dados inicializado em ' + strftime("%d/%m/%Y %H:%M:%S", gmtime())
@@ -291,20 +297,44 @@ class quackserver:
 
     # --------------------------------------------------------------- #
 
+    # Inicialização da visão - QuackDB
+    def inicializacao_visao(self):
+        # Carrega a lista de informações
+        try:
+            self.QUACK_CONFIG['Quack']['Visao']    =   visao(self.QUACK_CONFIG)
+        except Exception as p_erro:
+             # Mais detalhes sobre o erro
+            ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
+            ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
+            # Mais detalhes sobre o erro
+            vtmp_mensagem                           =   '[QUACKSERVER][INICIALIZACAOVISAO][' + str(ecx_dados.tb_lineno) + ']  - Não foi possível inicializar a visão! ' + str(p_erro) + ' | -- | ' + str(ecx_tipo) + ' | -- | ' + str(ecx_dados)  + ' | -- | ' + str(ecx_nome)
+            vtmp_retorno                            =   False
+        else:
+            vtmp_mensagem                           =   '[QUACKSERVER][INICIALIZACAOVISAO] - Visão inicializada'
+            vtmp_retorno                            =   True
+        finally:
+            self.quack_arquivo_log(vtmp_mensagem)
+            return vtmp_retorno
+    # Inicialização da visão - QuackDB
+
+    # --------------------------------------------------------------- #
+
     # Consulta todos os dados de câmeras, caso exista - Se não existir ... seta o filtro padrão
     def lista_cameras(self):
         try:
-            vtmp_consulta   =   "select c.nome as nome_cliente ,c.nome_fantasia as nome_fantasia ,c.chave_acesso as cliente_chave ,sa.chave_acesso as sistema_chave, s.id_sistema as id_sistema ,s.descricao as sistema_descricao ,sa.id_sistema_acesso as id_sistema_acesso ,la.id_lista_camera as id_lista_camera ,la.url_camera as url_camera ,la.ponto_corte as ponto_corte from cliente c inner join sistema_acesso sa on sa.id_cliente = c.id_cliente inner join sistema s on s.id_sistema = sa.id_sistema inner join lista_camera la on la.id_sistema_acesso = sa.id_sistema_acesso where s.ativo = 1 and sa.situacao = 1 and la.situacao = 1 and c.id_cliente = '" + self.QUACK_CONFIG['Chave']['ID'] + "' and c.chave_acesso = '" + self.QUACK_CONFIG['Chave']['Acesso'] + "' and sa.chave_acesso = '" + self.QUACK_CONFIG['Chave']['Sistema']
+            vtmp_consulta   =   "select c.nome as nome_cliente ,c.nome_fantasia as nome_fantasia ,c.chave_acesso as cliente_chave ,sa.chave_acesso as sistema_chave, s.id_sistema as id_sistema ,s.descricao as sistema_descricao ,sa.id_sistema_acesso as id_sistema_acesso ,la.id_lista_camera as id_lista_camera ,la.url_camera as url_camera ,la.ponto_corte as ponto_corte from cliente c inner join sistema_acesso sa on sa.id_cliente = c.id_cliente inner join sistema s on s.id_sistema = sa.id_sistema inner join lista_camera la on la.id_sistema_acesso = sa.id_sistema_acesso where s.ativo = 1 and sa.situacao = 1 and la.situacao = 1 and c.id_cliente = '" + str(self.QUACK_CONFIG['Chave']['ID']) + "' and c.chave_acesso = '" + str(self.QUACK_CONFIG['Chave']['Acesso']) + "' and sa.chave_acesso = '" + str(self.QUACK_CONFIG['Chave']['Sistema']) + "'"
             vtmp_resultado  =   self.QUACK_CONFIG['Quack']['DB'].realiza_consulta(self.QUACK_CONFIG, vtmp_consulta)
 
-            if vtmp_resultado:
+            if vtmp_resultado is not None:
                 self.QUACK_CONFIG['Lista']['Camera']    =   vtmp_resultado
+
+            return True
         except Exception as p_erro:
             # Mais detalhes sobre o erro
             ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
             ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
             # Mais detalhes sobre o erro
-            vtmp_mensagem   =   '[QUACKSERVER][LISTACAMERA][ERRO][' + str(ecx_dados.tb_lineno) + '] - ' + str(p_erro)
+            vtmp_mensagem   =   '[QUACKSERVER][LISTACAMERA][ERRO][' + str(ecx_dados.tb_lineno) + '] - ' + str(p_erro) + ' | -- | ' + str(ecx_tipo) + ' | -- | ' + str(ecx_dados)  + ' | -- | ' + str(ecx_nome)
             self.quack_arquivo_log(vtmp_mensagem)
             return False
     # Consulta todos os dados de câmeras, caso exista - Se não existir ... seta o filtro padrão
@@ -316,6 +346,22 @@ class quackserver:
     # ---------------------------------------------------------------- #
 
     # Método de execução para QuackServer - Inicializa a visão e separa os canais
+    def executa_quack(self):
+        try:
+            # Marca que as câmeras que serão utilizadas
+            self.lista_cameras()
+            # Marca que as câmeras que serão utilizadas
+
+            # Lista de dados para detecção - Câmeras disponíveis
+
+            # Lista de dados para detecção - Câmeras disponíveis
+        except Exception as p_erro:
+            # Mais detalhes sobre o erro
+            ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
+            ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
+            # Mais detalhes sobre o erro
+            vtmp_mensagem   =   '[QUACKSERVER][EXECUTAQUACK][ERRO][' + str(ecx_dados.tb_lineno) + '] - ' + str(p_erro) + ' | -- | ' + str(ecx_tipo) + ' | -- | ' + str(ecx_dados)  + ' | -- | ' + str(ecx_nome)
+            self.quack_arquivo_log(vtmp_mensagem)
     # Método de execução para QuackServer - Inicializa a visão e separa os canais
 
 

@@ -721,7 +721,7 @@ class visao_mbrauna:
     def proc_salva_log(self, p_imagem, p_id_sistema, p_id_classe, p_dim_sup_dir, p_dim_sup_esq, p_dim_inf_dir, p_dim_inf_esq, p_probabilidade):
         try:
             # Busca o último registro para aquela detecção.
-            vtmp_registro   =   self.VMBRAUNA_CONEXAO.executa_consulta("select max(cd.id_camera_deteccao) as ultimo_registro from camera_deteccao cd where cd.id_sistema_camera = " +  str(p_id_sistema) + " and cd.id_elemento = " + str(p_id_classe) + " and cd.data_deteccao >= now() - interval '10 min' and cd.dimensao_sup_esq  between " + str(p_dim_sup_esq-self.VMBRAUNA_CONFIGURACAO['MB_RASTREIO_ERRO']) + " and " + str(p_dim_sup_esq+self.VMBRAUNA_CONFIGURACAO['MB_RASTREIO_ERRO']) + " and cd.dimensao_inf_esq  between " + str(p_dim_inf_esq-self.VMBRAUNA_CONFIGURACAO['MB_RASTREIO_ERRO']) + " and " + str(p_dim_inf_esq+self.VMBRAUNA_CONFIGURACAO['MB_RASTREIO_ERRO']) +" and cd.dimensao_sup_dir  between " + str(p_dim_sup_dir-self.VMBRAUNA_CONFIGURACAO['MB_RASTREIO_ERRO']) + " and " + str(p_dim_sup_dir+self.VMBRAUNA_CONFIGURACAO['MB_RASTREIO_ERRO']) + " and cd.dimensao_inf_dir  between " + str(p_dim_inf_dir-self.VMBRAUNA_CONFIGURACAO['MB_RASTREIO_ERRO']) + " and " + str(p_dim_inf_dir+self.VMBRAUNA_CONFIGURACAO['MB_RASTREIO_ERRO']))
+            #vtmp_registro   =   self.VMBRAUNA_CONEXAO.executa_consulta("select max(cd.id_camera_deteccao) as ultimo_registro from camera_deteccao cd where cd.id_sistema_camera = " +  str(p_id_sistema) + " and cd.id_elemento = " + str(p_id_classe) + " and cd.data_deteccao >= now() - interval '10 min' and cd.dimensao_sup_esq  between " + str(p_dim_sup_esq-self.VMBRAUNA_CONFIGURACAO['MB_RASTREIO_ERRO']) + " and " + str(p_dim_sup_esq+self.VMBRAUNA_CONFIGURACAO['MB_RASTREIO_ERRO']) + " and cd.dimensao_inf_esq  between " + str(p_dim_inf_esq-self.VMBRAUNA_CONFIGURACAO['MB_RASTREIO_ERRO']) + " and " + str(p_dim_inf_esq+self.VMBRAUNA_CONFIGURACAO['MB_RASTREIO_ERRO']) +" and cd.dimensao_sup_dir  between " + str(p_dim_sup_dir-self.VMBRAUNA_CONFIGURACAO['MB_RASTREIO_ERRO']) + " and " + str(p_dim_sup_dir+self.VMBRAUNA_CONFIGURACAO['MB_RASTREIO_ERRO']) + " and cd.dimensao_inf_dir  between " + str(p_dim_inf_dir-self.VMBRAUNA_CONFIGURACAO['MB_RASTREIO_ERRO']) + " and " + str(p_dim_inf_dir+self.VMBRAUNA_CONFIGURACAO['MB_RASTREIO_ERRO']))
 
             if vtmp_registro[0][0] is None:
                 vtmp_registro   =   'null'
@@ -736,7 +736,7 @@ class visao_mbrauna:
             # Imagem para base64
 
             # Salva o novo registro
-            vtmp_dml        =   self.VMBRAUNA_CONEXAO.executa_DML("insert into camera_deteccao(id_sistema_camera, id_elemento, probabilidade, dimensao_sup_esq, dimensao_sup_dir, dimensao_inf_esq, dimensao_inf_dir,base64, id_cam_deteccao_ant) values (" + str(p_id_sistema) + ","+str(p_id_classe)+ ","+str(p_probabilidade)+ ","+str(p_dim_sup_esq)+ ","+str(p_dim_inf_esq)+ ","+str(p_dim_sup_dir)+ ","+str(p_dim_inf_dir)+ ",'"+str(vtmp_imagem)+"',"+str(vtmp_registro)+")")
+            #vtmp_dml        =   self.VMBRAUNA_CONEXAO.executa_DML("insert into camera_deteccao(id_sistema_camera, id_elemento, probabilidade, dimensao_sup_esq, dimensao_sup_dir, dimensao_inf_esq, dimensao_inf_dir,base64, id_cam_deteccao_ant) values (" + str(p_id_sistema) + ","+str(p_id_classe)+ ","+str(p_probabilidade)+ ","+str(p_dim_sup_esq)+ ","+str(p_dim_inf_esq)+ ","+str(p_dim_sup_dir)+ ","+str(p_dim_inf_dir)+ ",'"+str(vtmp_imagem)+"',"+str(vtmp_registro)+")")
             # Salva o novo registro
         except Exception as p_erro:
             # Mais detalhes sobre o erro
