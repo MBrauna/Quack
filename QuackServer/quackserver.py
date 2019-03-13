@@ -50,6 +50,7 @@ class quackserver:
                             #######################################
                            ,'Quack'     :   {
                                                 'DB'            :   None
+                                               ,'Exibicao'      :   False
                                                ,'Visao'         :   None
                                             }
                             #######################################
@@ -179,6 +180,13 @@ class quackserver:
             if self.valida_alfanumerico(config.QUACK_DIRETORIO_LOG):
                 self.QUACK_CONFIG['Diretorio']['Log']   =   config.QUACK_DIRETORIO_LOG
             # Para caminho do diretório de log - Quack
+
+            # Para verificar se deve exibir imagem detectada ou apenas gravar informação
+            if config.QUACK_GERA_EXIBICAO:
+                self.QUACK_CONFIG['Quack']['Exibicao']  =   True
+            else:
+                self.QUACK_CONFIG['Quack']['Exibicao']  =   False
+            # Para verificar se deve exibir imagem detectada ou apenas gravar informação
             # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- #
         except Exception as p_erro:
             vtmp_mensagem   =   '[QUACKSERVER][CONFIG]['+ str(ecx_dados.tb_lineno) + '] - Não foi possível o carregamento das configurações! Verifique.' + str(p_erro) + ' | -- | ' + str(ecx_tipo) + ' | -- | ' + str(ecx_dados)  + ' | -- | ' + str(ecx_nome)
@@ -322,7 +330,7 @@ class quackserver:
     # Consulta todos os dados de câmeras, caso exista - Se não existir ... seta o filtro padrão
     def lista_cameras(self):
         try:
-            vtmp_consulta   =   "select c.nome as nome_cliente ,c.nome_fantasia as nome_fantasia ,c.chave_acesso as cliente_chave ,sa.chave_acesso as sistema_chave, s.id_sistema as id_sistema ,s.descricao as sistema_descricao ,sa.id_sistema_acesso as id_sistema_acesso ,la.id_lista_camera as id_lista_camera ,la.url_camera as url_camera ,la.ponto_corte as ponto_corte from cliente c inner join sistema_acesso sa on sa.id_cliente = c.id_cliente inner join sistema s on s.id_sistema = sa.id_sistema inner join lista_camera la on la.id_sistema_acesso = sa.id_sistema_acesso where s.ativo = 1 and sa.situacao = 1 and la.situacao = 1 and c.id_cliente = '" + str(self.QUACK_CONFIG['Chave']['ID']) + "' and c.chave_acesso = '" + str(self.QUACK_CONFIG['Chave']['Acesso']) + "' and sa.chave_acesso = '" + str(self.QUACK_CONFIG['Chave']['Sistema']) + "'"
+            vtmp_consulta   =   "select la.url_camera as url_camera, la.descricao as desc_camera, la.id_lista_camera as id_lista_camera, la.ponto_corte as ponto_corte from cliente c inner join sistema_acesso sa on sa.id_cliente = c.id_cliente inner join sistema s on s.id_sistema = sa.id_sistema inner join lista_camera la on la.id_sistema_acesso = sa.id_sistema_acesso where s.ativo = 1 and sa.situacao = 1 and la.situacao = 1 and c.id_cliente = '" + str(self.QUACK_CONFIG['Chave']['ID']) + "' and c.chave_acesso = '" + str(self.QUACK_CONFIG['Chave']['Acesso']) + "' and sa.chave_acesso = '" + str(self.QUACK_CONFIG['Chave']['Sistema']) + "'"
             vtmp_resultado  =   self.QUACK_CONFIG['Quack']['DB'].realiza_consulta(self.QUACK_CONFIG, vtmp_consulta)
 
             if vtmp_resultado is not None:
@@ -353,7 +361,7 @@ class quackserver:
             # Marca que as câmeras que serão utilizadas
 
             # Lista de dados para detecção - Câmeras disponíveis
-
+            self.QUACK_CONFIG['Quack']['Visao'].executa(self.QUACK_CONFIG)
             # Lista de dados para detecção - Câmeras disponíveis
         except Exception as p_erro:
             # Mais detalhes sobre o erro

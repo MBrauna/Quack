@@ -39,6 +39,18 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 '''
 
 class visao:
+    """
+    FONT_HERSHEY_SIMPLEX = 0,
+    FONT_HERSHEY_PLAIN = 1,
+    FONT_HERSHEY_DUPLEX = 2,
+    FONT_HERSHEY_COMPLEX = 3,
+    FONT_HERSHEY_TRIPLEX = 4,
+    FONT_HERSHEY_COMPLEX_SMALL = 5,
+    FONT_HERSHEY_SCRIPT_SIMPLEX = 6,
+    FONT_HERSHEY_SCRIPT_COMPLEX = 7,
+    FONT_ITALIC = 16
+    """
+    QUACK_FONTE                             =   cv2.FONT_HERSHEY_DUPLEX
     # # --------------------------------------------------------------# #
     # #                    VARIAVEL INTERNA - ARRAY                   # #
     # # --------------------------------------------------------------# #
@@ -325,12 +337,16 @@ class visao:
     # # --------------------------------------------------------------# #
 
     # Carregamento via câmera ou URL
-    def executa(self, p_comandos):
+    def executa(self, p_configuracao):
         try:
+            # Armazena a configuração atual com as lista atualizadas
+            self.QUACK_CONFIG   =   p_configuracao
+            # Armazena a configuração atual com as lista atualizadas
+
             # Armazena os dados das câmeras para primeira composição das imagens, os dados serão obtidos
             # através de uma lista pré-cadastrada ou quiçá da webcam, de acordo com o modelo de negócio aplicado.
             # Cria a piscina de requisições - PARALELISMO APLICADO THREADING
-            vmulti_piscina      =   [Thread(target=self.visao,args=(p_comandos[curreg][0],p_comandos[curreg][1], p_comandos[curreg][2], p_comandos[curreg][3])) for curreg in range(len(p_comandos))]
+            vmulti_piscina      =   [Thread(target=self.visao,args=(self.QUACK_CONFIG['Lista']['Camera'][curreg][1],self.QUACK_CONFIG['Lista']['Camera'][curreg][0], self.QUACK_CONFIG['Lista']['Camera'][curreg][3], self.QUACK_CONFIG['Lista']['Camera'][curreg][2])) for curreg in range(len(self.QUACK_CONFIG['Lista']['Camera']))]
             # Cria a piscina de requisições - PARALELISMO APLICADO THREADING
 
             # Prepara o pool para execução - Processo
@@ -354,7 +370,7 @@ class visao:
     def visao(self, p_texto, p_caminho, p_ponto_corte, p_id_sistema_camera):
         try:
             vtmp_erro       =   '[Inicializada][' + p_texto + '] - ' + p_caminho
-            self.proc_salva_arquivo(vtmp_erro)
+            self.quack_arquivo_log(vtmp_erro)
             # Prepara o loop para execução da visao
             while True:
                 try:
@@ -363,17 +379,18 @@ class visao:
                     # Inicializa a captura marcando o alvo/caminho que será atingido
 
                     ## Coleta as câmeras e seus dados
-                    vmb_ret, vmb_camera         =   vmb_visao_captura.read()
+                    vmb_ret, vmb_camera                     =   vmb_visao_captura.read()
                     #vmb_camera                  =   cv2.flip(vmb_camera,1)
-                    vmb_reconhecimento          =   self.func_inicia_rec(vmb_camera, p_texto, p_ponto_corte, p_id_sistema_camera)
+                    vmb_reconhecimento, vtmp_img_tratada    =   self.func_inicia_rec(vmb_camera, p_texto, p_ponto_corte, p_id_sistema_camera)
 
                     if not vmb_reconhecimento:
                         vtmp_erro       =   '[PARADA DETECTADA] - Tentando reconexão com ' + p_texto
                         self.quack_arquivo_log(vtmp_erro)
                     else:
-                      # Escreve a imagem para visualização
-                      cv2.imshow(p_texto, vmb_camera)
-                      # Executa o prometeus para detecção
+                        # Escreve a imagem para visualização
+                        if self.QUACK_CONFIG['Quack']['Exibicao']:
+                            cv2.imshow(p_texto, vtmp_img_tratada)
+                        # Executa o prometeus para detecção
 
                     ## Monitora as teclas usadas, se clicado "Q" ...
                     if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -412,13 +429,14 @@ class visao:
                 return False;
 
             v_imagem            =   p_imagem.copy()
+            v_imagem_retorno    =   p_imagem.copy()
             v_imagem_array      =   Imagem.fromarray(v_imagem)
             v_altura, v_largura =   v_imagem_array.size
             v_indice_cor        =   0
 
             # Com a imagem em mãos ... inicia tratamento
             # Percorrerá o modelo de detecção em busca dos objetos
-            for csr_aprendizado in self.VMBRAUNA_MODELO_TF:
+            for csr_aprendizado in self.QUACK_MODELO_TF:
                 if csr_aprendizado['SUCESSO']:
                     # Expande a imagem para o seguinte formato: [1, None, None, 3]
                     # Em resumo, deixa a imagem 3x maior para deteção
@@ -471,8 +489,8 @@ class visao:
                             # Carega o log para o banco de dados.
 
                             # Desenha a área numa cópia para retorno
-                            #cv2.rectangle(v_imagem_retorno, (vcx_alto, vcx_direita), (vcx_baixo, vcx_esquerda), (self.VMBRAUNA_COR[v_indice_cor]["VERMELHO"], self.VMBRAUNA_COR[v_indice_cor]["AZUL"], self.VMBRAUNA_COR[v_indice_cor]["VERDE"]), 1)
-
+                            cv2.rectangle(v_imagem_retorno, (vmb_dim_sup_dir, vmb_dim_inf_dir), (vmb_dim_sup_esq, vmb_dim_inf_esq), (self.QUACK_COR[v_indice_cor]["VERMELHO"], self.QUACK_COR[v_indice_cor]["AZUL"], self.QUACK_COR[v_indice_cor]["VERDE"]), 1)
+                            cv2.putText(v_imagem_retorno, csr_aprendizado['INDICE'][np.squeeze(csr_classe).astype(np.int32)[csr_iterador]]['name'].capitalize(), (vmb_dim_sup_dir, vmb_dim_inf_dir), self.QUACK_FONTE, 1, (self.QUACK_COR[v_indice_cor]["VERMELHO"], self.QUACK_COR[v_indice_cor]["AZUL"], self.QUACK_COR[v_indice_cor]["VERDE"]), 2, cv2.LINE_AA)
                             # Desenha a área numa cópia para retorno
 
                             # Marca a tupla de elemento identificado
@@ -550,7 +568,7 @@ class visao:
                         # Apenas registros dentro dos padrões informados serão tratados
             # Percorrerá o modelo de detecção em busca dos objetos
 
-            return True
+            return True, v_imagem_retorno
         except Exception as p_erro:
             # Mais detalhes sobre o erro
             ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
@@ -559,5 +577,5 @@ class visao:
             vtmp_erro   =   '[VISAO][FUNC_INICIA_REC][ERRO][' + str(ecx_dados.tb_lineno) + '] - ' + str(p_erro) + ' | -- | ' + str(ecx_tipo) + ' | -- | ' + str(ecx_dados)  + ' | -- | ' + str(ecx_nome)
             self.quack_arquivo_log(vtmp_erro)
 
-            return False
+            return False, v_imagem_retorno
     # Treinamento - Inicia o reconhecimento de características macro

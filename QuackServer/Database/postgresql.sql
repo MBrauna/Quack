@@ -289,6 +289,7 @@ create table lista_camera
     id_lista_camera     integer   not null
    ,id_sistema_acesso   integer   not null
    ,url_camera          text      not null
+   ,descricao           text      not null
    ,ponto_corte         integer   not null default 30
    ,situacao            integer   not null default 1
    ,primary key(id_lista_camera)
