@@ -296,3 +296,87 @@ create table lista_camera
    ,constraint fk_lista_camera_sisac foreign key (id_sistema_acesso) references sistema_acesso(id_sistema_acesso)
    ,constraint uk_lista_camera_sisac unique(id_sistema_acesso,url_camera)
 );
+
+
+create index idx_lista_camera_corte                 on lista_camera(ponto_corte asc nulls last);
+create index idx_lista_camera_situacao              on lista_camera(situacao asc nulls last);
+create index idx_lista_camera_sistema               on lista_camera(id_sistema_acesso asc nulls last);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Composição da tabela de logs das câmeras
+create sequence seq_camera_deteccao increment 1 start 1 minvalue 1 maxvalue 999999999999;
+create table camera_deteccao
+(
+    id_camera_deteccao  integer             not null default nextval('seq_camera_deteccao')
+   ,id_lista_camera     integer
+   ,id_elemento         integer             not null
+   ,probabilidade       double precision    not null
+   ,dimensao_sup_esq    integer             not null
+   ,dimensao_sup_dir    integer             not null
+   ,dimensao_inf_esq    integer             not null
+   ,dimensao_inf_dir    integer             not null
+   ,base64              text
+   ,base64_elemento     text
+   ,data_deteccao       timestamp           not null default now()
+   ,id_cam_deteccao_ant integer
+   ,primary key(id_camera_deteccao)
+   ,constraint fk_camera_deteccao_sistcam   foreign key(id_lista_camera)    references lista_camera(id_lista_camera)
+   ,constraint fk_camera_deteccao_elemento  foreign key(id_elemento)          references elemento(id_elemento)
+   ,constraint fk_camera_deteccao_anterior  foreign key(id_cam_deteccao_ant)  references camera_deteccao(id_camera_deteccao)
+);
+
+create index idx_camera_deteccao_siscam   on camera_deteccao(id_lista_camera asc nulls last);
+create index idx_camera_deteccao_elemento on camera_deteccao(id_elemento asc nulls last);
+create index idx_camera_deteccao_probab   on camera_deteccao(probabilidade asc nulls last);
+create index idx_camera_deteccao_dsupesq  on camera_deteccao(dimensao_sup_esq asc nulls last);
+create index idx_camera_deteccao_dsupdir  on camera_deteccao(dimensao_sup_dir asc nulls last);
+create index idx_camera_deteccao_dinfesq  on camera_deteccao(dimensao_inf_esq asc nulls last);
+create index idx_camera_deteccao_dinfdir  on camera_deteccao(dimensao_inf_dir asc nulls last);
+create index idx_camera_deteccao_data     on camera_deteccao(data_deteccao asc nulls last);
+create index idx_camera_deteccao_idant    on camera_deteccao(id_cam_deteccao_ant asc nulls last);
+
+
+
+
+CREATE FUNCTION public.tg_camera_deteccao() RETURNS trigger AS
+$BODY$declare
+  v_ult_id_deteccao integer;
+begin
+  begin
+    select max(cd.id_camera_deteccao)
+      into v_ult_id_deteccao
+      from camera_deteccao cd
+     where cd.id_lista_camera        = new.id_lista_camera
+       and cd.id_elemento            = new.id_elemento
+       and cd.data_deteccao         >= now() - interval '10 min'
+       and cd.dimensao_sup_esq between new.dimensao_sup_esq - 50 and new.dimensao_sup_esq + 50
+       and cd.dimensao_sup_dir between new.dimensao_sup_dir - 50 and new.dimensao_sup_dir + 50
+       and cd.dimensao_inf_esq between new.dimensao_inf_esq - 50 and new.dimensao_inf_esq + 50
+       and cd.dimensao_inf_dir between new.dimensao_inf_dir - 50 and new.dimensao_inf_dir + 50
+         ;
+  exception
+    when others then
+      v_ult_id_deteccao := null;
+  end;
+  new.data_deteccao       := now();
+  new.id_cam_deteccao_ant := v_ult_id_deteccao;
+end;$BODY$
+LANGUAGE plpgsql VOLATILE NOT LEAKPROOF;
+
+
+CREATE TRIGGER tg_bir_camera_deteccao BEFORE INSERT
+   ON public.camera_deteccao FOR EACH ROW
+   EXECUTE PROCEDURE public.tg_camera_deteccao();

@@ -47,7 +47,7 @@ QUACK_CHAVE_USUARIO     =   '230c53159c2a469318eda4ab2c5ace58'
 #              MARGEM DE ERRO DO RASTREIO - POR COORDENADAS              #
 ##########################################################################
 QUACK_MARGEM_RASTREIO   =   100
-QUACK_GERA_EXIBICAO     =   False
+QUACK_GERA_EXIBICAO     =   True
 ##########################################################################
 #                  DIRETORIO ONDE OS LOGS SERÃO SALVOS                   #
 ##########################################################################

@@ -485,12 +485,13 @@ class visao:
                             # Delimita a área de observação do dado detectado
 
                             # Carega o log para o banco de dados.
-                            #self.proc_salva_log(vtmp_imagem, p_id_sistema_camera, csr_aprendizado['INDICE'][np.squeeze(csr_classe).astype(np.int32)[csr_iterador]]['id'], vmb_dim_sup_dir, vmb_dim_sup_esq, vmb_dim_inf_dir, vmb_dim_inf_esq, ((np.squeeze(csr_pontuacao)[csr_iterador]) *100))
+                            self.proc_salva_log(v_imagem,vtmp_imagem, p_id_sistema_camera, csr_aprendizado['INDICE'][np.squeeze(csr_classe).astype(np.int32)[csr_iterador]]['id'], vmb_dim_sup_dir, vmb_dim_sup_esq, vmb_dim_inf_dir, vmb_dim_inf_esq, ((np.squeeze(csr_pontuacao)[csr_iterador]) *100))
                             # Carega o log para o banco de dados.
 
                             # Desenha a área numa cópia para retorno
                             cv2.rectangle(v_imagem_retorno, (vmb_dim_sup_dir, vmb_dim_inf_dir), (vmb_dim_sup_esq, vmb_dim_inf_esq), (self.QUACK_COR[v_indice_cor]["VERMELHO"], self.QUACK_COR[v_indice_cor]["AZUL"], self.QUACK_COR[v_indice_cor]["VERDE"]), 1)
-                            cv2.putText(v_imagem_retorno, csr_aprendizado['INDICE'][np.squeeze(csr_classe).astype(np.int32)[csr_iterador]]['name'].capitalize(), (vmb_dim_sup_dir, vmb_dim_inf_dir), self.QUACK_FONTE, 1, (self.QUACK_COR[v_indice_cor]["VERMELHO"], self.QUACK_COR[v_indice_cor]["AZUL"], self.QUACK_COR[v_indice_cor]["VERDE"]), 2, cv2.LINE_AA)
+                            vtmp_texto_imagem   =   str(csr_aprendizado['INDICE'][np.squeeze(csr_classe).astype(np.int32)[csr_iterador]]['name'].capitalize()) + ": " + str(((np.squeeze(csr_pontuacao)[csr_iterador]) *100)) + "%"
+                            cv2.putText(v_imagem_retorno, vtmp_texto_imagem, (vmb_dim_sup_dir+20, vmb_dim_inf_dir+20), self.QUACK_FONTE, 1, (self.QUACK_COR[v_indice_cor]["VERMELHO"], self.QUACK_COR[v_indice_cor]["AZUL"], self.QUACK_COR[v_indice_cor]["VERDE"]), 2, cv2.LINE_AA)
                             # Desenha a área numa cópia para retorno
 
                             # Marca a tupla de elemento identificado
@@ -579,3 +580,198 @@ class visao:
 
             return False, v_imagem_retorno
     # Treinamento - Inicia o reconhecimento de características macro
+
+    # # --------------------------------------------------------------# #    
+
+    # Função para validação da imagem em base64 informada
+    def func_valida_base64(self,p_base64):
+        try:
+            v_imagem    =   self.func_base64_para_imagem(p_base64)
+            v_altura, v_largura, v_canal = v_imagem.shape
+
+            return (v_altura is not None and v_largura is not None and v_altura > 0 and v_largura > 0)
+        except Exception  as p_erro:
+            return False
+        except ValueError as p_erro:
+            return False
+    # Função para validação da imagem em base64 informada
+
+    # # --------------------------------------------------------------# #    
+
+    # Função - Converte base64 para imagem
+    def func_base64_para_imagem(self,p_base64):
+        try:
+            v_imagem_bytes  =   imread(io.BytesIO(base64.b64decode(p_base64)))
+            v_imagem_final  =   cv2.cvtColor(v_imagem_bytes, cv2.COLOR_RGB2BGR)
+
+            return v_imagem_final
+        except Exception as p_erro:
+            # Mais detalhes sobre o erro
+            ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
+            ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
+
+            vtmp_erro   =   '[VISAO][FUNC_BASE64_PARA_IMAGEM][ERRO][' + ecx_dados.tb_lineno + '] - ' + p_erro
+            self.quack_arquivo_log(vtmp_erro)
+            return None
+    # Função - Converte base64 para imagem
+
+    # # --------------------------------------------------------------# #    
+
+    # Função - Converte Imagem para base64
+    def func_imagem_para_base64(self,p_imagem):
+        try:
+            v_dimensao, v_imagem    =   cv2.imencode('.jpg', p_imagem)
+            v_img_bytes             =   base64.b64encode(v_imagem)
+            v_img_string            =   v_img_bytes.decode()
+
+            return v_img_string
+        except Exception as p_erro:
+            # Mais detalhes sobre o erro
+            ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
+            ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
+
+            vtmp_erro   =   '[VISAO][FUNC_IMAGEM_PARA_BASE64][ERRO][' + ecx_dados.tb_lineno + '] - ' + p_erro
+            self.proc_salva_arquivo(vtmp_erro)
+            return None
+    # Função - Converte Imagem para base64
+
+    # # --------------------------------------------------------------# #    
+
+    # Função para transformar dimensões DLIB em OPENCV
+    def func_dimensao_dlib_opencv(p_dimensao):
+        try:
+            return rect.top(), rect.right(), rect.bottom(), rect.left()
+        except Exception as e:
+            return None, None, None, None
+    # Função para transformar dimensões DLIB em OPENCV
+
+    # # --------------------------------------------------------------# #    
+
+    # Função para transformar dimensões OpenCV em DLib
+    def func_dimensao_opencv_dlib(p_dimensao):
+        try:
+            return dlib.rectangle(css[3], css[0], css[1], css[2])
+        except Exception as e:
+            return None
+    # Função para transformar dimensões OpenCV em DLib
+
+    # # --------------------------------------------------------------# #    
+
+    # Função para cortar as dimensões localizadas que estiverem excedendo a função inicial
+    def func_aparar_dimensao(p_dimensao, p_img_original_dimensao):
+        try:
+            return max(p_dimensao[0], 0), min(p_dimensao[1], p_img_original_dimensao[1]), min(p_dimensao[2], p_img_original_dimensao[0]), max(p_dimensao[3], 0)
+        except Exception as e:
+            return None
+    # Função para cortar as dimensões localizadas que estiverem excedendo a função inicial
+
+    # # --------------------------------------------------------------# #    
+
+    # Função para detectar rostos com base em distância euclidiana faces similares
+    def func_euclidiana_rostos(p_rosto, p_rosto_comparar):
+        # Optei por distância euclidiana por oferecer uma comparação boa, com um cálculo simples
+        # caso a necessidade de executá-lo numa lista encadeada de tamanho gigantesca.
+        
+        # Até então nunca testado ... provavelmente necessitará ajustes
+
+        # A distância euclidiana entre dois pontos é composta pela soma de todos os elementos ao quadrado
+        # Subtraindo pela soma de todos os elementos de comparação ao quadrado
+        # Pela raiz quadrada do resultado desta operação.
+
+        # # # # # # # # # # # # # # # # # # # # # # # # # #
+        # sqrt{(p_1-q_1)^2 + (p_2-q_2)^2+...+(p_n-q_n)^2} #
+        # # # # # # # # # # # # # # # # # # # # # # # # # #
+        # Ou podemos usar a função da bib. matemática de  #
+        # numpy chamada linalg.norm.                      #
+        # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+        try:
+            if len(p_rosto) == 0:
+                return np.empty((0))
+
+            return np.linalg.norm(p_rosto - p_rosto_comparar,axis=1)
+        except Exception  as p_erro:
+            return np.empty((0))
+        except ValueError as p_erro:
+            return np.empty((0))
+    # Função para detectar rostos com base em distância euclidiana faces similare
+
+    # # --------------------------------------------------------------# #    
+
+    # Carrega uma imagem de um arquivo para array numpy
+    def func_carrega_imagem(p_arquivo, p_modo='RGB'):
+        try:
+            v_imagem        =   Imagem.open(p_arquivo)
+
+            if p_modo:
+                v_imagem    =   v_imagem.convert(p_modo)
+
+            return np.array(v_imagem)
+        except Exception as p_erro:
+            return None
+        except ValueError as p_erro:
+            return None
+    # Carrega uma imagem de um arquivo para array numpy
+
+    # # --------------------------------------------------------------# #    
+
+    # Função - Transforma array em Imagem
+    def func_img_expandida_para_normal(self, p_imagem_expandida):
+        try:
+            return np.squeeze(p_array_imagem, axis=0)
+        except Exception as e:
+            return None
+    # Função - Transforma array em Imagem
+
+    # # --------------------------------------------------------------# #    
+
+    # Função para converter imagem numpy em imagem OpenCV
+    def func_imagem_numpy_para_opencv(p_imagem):
+        try:
+            return np.zeros(p_imagem, np.unit8)
+        except Exception as p_erro:
+            return None
+        except Exception as p_erro:
+            return None
+    # Função para converter imagem numpy em imagem OpenCV
+
+    # # --------------------------------------------------------------# #    
+
+    # Função para converter imagem opencv em imagem numpy
+    def func_imagem_opencv_para_numpy(p_imagem):
+        try:
+            return np.asarray(p_imagem, dtype='uint8')
+        except Exception as p_erro:
+            return None
+        except Exception as p_erro:
+            return None
+    # Função para converter imagem opencv em imagem numpy
+
+    # # --------------------------------------------------------------# #    
+
+    # Procedimento para armazenar no banco de dados todos os dados obtidos na detecção
+    def proc_salva_log(self, p_imagem, p_imagem_cortada, p_id_lista_camera, p_id_classe, p_dim_sup_dir, p_dim_sup_esq, p_dim_inf_dir, p_dim_inf_esq, p_probabilidade):
+        try:
+            # Imagem para base64
+            vtmp_imagem                 =   self.func_imagem_para_base64(p_imagem)
+            if vtmp_imagem is None:
+                vtmp_imagem             =   'null'
+            # Imagem para base64
+
+            # Imagem para base64
+            vtmp_imagem_cortada         =   self.func_imagem_para_base64(p_imagem_cortada)
+            if vtmp_imagem_cortada is None:
+                vtmp_imagem_cortada     =   'null'
+            # Imagem para base64            
+
+            # Salva o novo registro
+            vtmp_comando    =   'insert into camera_deteccao(id_lista_camera, id_elemento, probabilidade, dimensao_sup_esq, dimensao_sup_dir, dimensao_inf_esq, dimensao_inf_dir,base64, base64_elemento) values (' + str(p_id_lista_camera) + ','+str(p_id_classe)+ ','+str(p_probabilidade)+ ','+str(p_dim_sup_esq)+ ','+str(p_dim_inf_esq)+ ','+str(p_dim_sup_dir)+ ','+str(p_dim_inf_dir)+ ',%s,%s)'
+            vtmp_dml        =   self.QUACK_CONFIG['Quack']['DB'].salva_log_arquivo(self.QUACK_CONFIG,vtmp_comando, vtmp_imagem, vtmp_imagem_cortada)
+            # Salva o novo registro
+        except Exception as p_erro:
+            # Mais detalhes sobre o erro
+            ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
+            ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
+
+            vtmp_erro   =   '[VISAO][PROC_SALVA_LOG][ERRO][' + str(ecx_dados.tb_lineno) + '] - ' + str(p_erro)
+            self.quack_arquivo_log(vtmp_erro)

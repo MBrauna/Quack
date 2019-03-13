@@ -100,7 +100,7 @@ class quackdb:
             # Marca a DDL como sucesso
 
             # Marca o commit
-            p_configuracao['Quack']['DB'].commit()
+            self.quack_conexao.commit()
             # Marca o commit
 
             # Marca a finalização da sessão
@@ -117,6 +117,37 @@ class quackdb:
             self.quack_arquivo_log(p_configuracao, vtmp_mensagem)
             return False
     # QuackDB - Realiza procedimentos no banco de dados
+
+    # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- #
+
+    def salva_log_arquivo(self, p_configuracao, p_comando, p_base64, p_base64_cortada):
+        try:
+            # Abre uma sessão no banco de dados
+            vtmp_sessao     =   self.quack_conexao.cursor()
+            # Abre uma sessão no banco de dados
+
+            # Executa a DDL
+            vtmp_sessao.execute(p_comando,(str(p_base64), str(p_base64_cortada),))
+            # Marca a DDL como sucesso
+
+            # Marca o commit
+            self.quack_conexao.commit()
+            # Marca o commit
+
+            # Marca a finalização da sessão
+            vtmp_sessao.close()
+            # Marca a finalização da sessão
+
+            return True
+        except Exception as p_erro:
+            # Mais detalhes sobre o erro
+            ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
+            ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
+            # Mais detalhes sobre o erro
+            vtmp_mensagem   =   '[QUACKDB][EXECUTAPROCEDIMENTO][ERRO] - Ocorreu um erro ao executar o procedimento [' + str(ecx_dados.tb_lineno) + '] - ' + str(p_erro)
+            self.quack_arquivo_log(p_configuracao, vtmp_mensagem)
+            return False
+
 
     # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- #
 
