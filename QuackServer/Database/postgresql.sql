@@ -330,6 +330,7 @@ create table camera_deteccao
    ,dimensao_inf_dir    integer             not null
    ,imagem              bytea
    ,imagem_cortada      bytea
+   ,imagem_tratada      bytea
    ,data_deteccao       timestamp           not null default now()
    ,id_cam_deteccao_ant integer
    ,primary key(id_camera_deteccao)
