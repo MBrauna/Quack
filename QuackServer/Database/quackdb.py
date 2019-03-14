@@ -120,14 +120,14 @@ class quackdb:
 
     # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- #
 
-    def salva_log_arquivo(self, p_configuracao, p_imagem, p_imagem_cortada, p_id_lista_camera, p_id_classe, p_probabilidade, p_dim_sup_esq, p_dim_inf_esq, p_dim_sup_dir, p_dim_inf_dir):
+    def salva_log_arquivo(self, p_configuracao, p_imagem, p_imagem_cortada, p_imagem_tratada, p_id_lista_camera, p_id_classe, p_probabilidade, p_dim_sup_esq, p_dim_inf_esq, p_dim_sup_dir, p_dim_inf_dir):
         try:
             # Abre uma sessão no banco de dados
             vtmp_sessao     =   self.quack_conexao.cursor()
             # Abre uma sessão no banco de dados
 
             # Executa a DDL
-            vtmp_sessao.execute('insert into camera_deteccao(id_lista_camera, id_elemento, probabilidade, dimensao_sup_esq, dimensao_sup_dir, dimensao_inf_esq, dimensao_inf_dir,imagem, imagem_cortada) values (%s,%s,%s,%s,%s,%s,%s,%s,%s)',(p_id_lista_camera,p_id_classe,p_probabilidade,p_dim_sup_esq,p_dim_inf_esq,p_dim_sup_dir,p_dim_inf_dir,p_imagem, p_imagem_cortada))
+            vtmp_sessao.execute('insert into camera_deteccao(id_lista_camera, id_elemento, probabilidade, dimensao_sup_esq, dimensao_sup_dir, dimensao_inf_esq, dimensao_inf_dir,imagem, imagem_cortada, imagem_tratada) values (%s,%s,%s,%s,%s,%s,%s,%s,%s, %s)',(p_id_lista_camera,p_id_classe,p_probabilidade,p_dim_sup_esq,p_dim_inf_esq,p_dim_sup_dir,p_dim_inf_dir,p_imagem, p_imagem_cortada, p_imagem_tratada))
             # Marca a DDL como sucesso
 
             # Marca o commit
@@ -144,7 +144,7 @@ class quackdb:
             ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
             ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
             # Mais detalhes sobre o erro
-            vtmp_mensagem   =   '[QUACKDB][EXECUTAPROCEDIMENTO][ERRO] - Ocorreu um erro ao executar o procedimento [' + str(ecx_dados.tb_lineno) + '] - ' + str(p_erro)
+            vtmp_mensagem   =   '[QUACKDB][SALVALOG][ERRO] - Ocorreu um erro ao executar o procedimento [' + str(ecx_dados.tb_lineno) + '] - ' + str(p_erro)
             self.quack_arquivo_log(p_configuracao, vtmp_mensagem)
             return False
 

@@ -10,6 +10,7 @@ Autor: Michel Brauna                             Data: 12/01/2011
 """
 
 # Bibliotecas externas para reconhecimento facial
+import  asyncio
 import  base64                                                                                          ## Biblioteca para tratamento em base64
 import  cv2                                                                                             ## Biblioteca para leitura de câmeras e detecção
 import  PIL.Image                                                       as Imagem                       ## Biblioteca para tratamento de imagens
@@ -381,25 +382,36 @@ class visao:
                     ## Coleta as câmeras e seus dados
                     vmb_ret, vmb_camera                     =   vmb_visao_captura.read()
                     #vmb_camera                  =   cv2.flip(vmb_camera,1)
-                    vmb_reconhecimento, vtmp_img_tratada    =   self.func_inicia_rec(vmb_camera, p_texto, p_ponto_corte, p_id_sistema_camera)
 
-                    if not vmb_reconhecimento:
-                        vtmp_erro       =   '[PARADA DETECTADA] - Tentando reconexão com ' + p_texto
-                        self.quack_arquivo_log(vtmp_erro)
+                    self.func_inicia_rec(vmb_camera, p_texto, p_ponto_corte, p_id_sistema_camera)
+
+                    #if not vmb_reconhecimento:
+                    #    vtmp_erro       =   '[PARADA DETECTADA] - Tentando reconexão com ' + p_texto
+                    #    self.quack_arquivo_log(vtmp_erro)
                     
 
                     ## Monitora as teclas usadas, se clicado "Q" ...
-                    if cv2.waitKey(1) & 0xFF == ord('q'):
-                        # Encerra o loop
-                        break
+                    #if cv2.waitKey(1) & 0xFF == ord('q'):
+                    #    # Encerra o loop
+                    #    break
 
                     ## Encerra a coleta de imagens da câmera
                     vmb_visao_captura.release()
-                except Exception as e:
-                    break
+                except Exception as p_erro:
+                    try:
+                        vmb_visao_captura.release()
+                    except Exception as pp_erro:
+                        pass
+
+                    # Mais detalhes sobre o erro
+                    ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
+                    ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
+
+                    vtmp_erro   =   '[VISAO][ERROLOOP][' + str(ecx_dados.tb_lineno) + '] - ' + str(p_erro) + ' | -- | ' + str(ecx_tipo) + ' | -- | ' + str(ecx_dados)  + ' | -- | ' + str(ecx_nome)
+                    self.quack_arquivo_log(vtmp_erro)
 
             ## Ao sair do loop a janela criada ficava em aberto ... necessário destruí-la.
-            cv2.destroyAllWindows()
+            #cv2.destroyAllWindows()
             # Prepara o loop para execução da visao
         except Exception as p_erro:
             ## Encerra a coleta de imagens da câmera
@@ -422,7 +434,9 @@ class visao:
             if p_imagem is None:
                 vtmp_erro       =   '[Alerta] - Nenhuma imagem obtida para [' + p_texto +'] - Parada eminente.'
                 self.quack_arquivo_log(vtmp_erro)
-                return False;
+                vtmp_erro       =   '[Alerta] - Tentando reconexão [' + str(p_texto) +']! Aguarde'
+                self.quack_arquivo_log(vtmp_erro)
+                return
 
             v_imagem            =   p_imagem.copy()
             v_imagem_retorno    =   p_imagem.copy()
@@ -480,15 +494,15 @@ class visao:
                             vtmp_imagem         =   v_imagem[vmb_dim_inf_esq:vmb_dim_inf_dir, vmb_dim_sup_dir:vmb_dim_sup_esq]
                             # Delimita a área de observação do dado detectado
 
-                            # Carega o log para o banco de dados.
-                            self.proc_salva_log(v_imagem,vtmp_imagem, p_id_sistema_camera, csr_aprendizado['INDICE'][np.squeeze(csr_classe).astype(np.int32)[csr_iterador]]['id'], vmb_dim_sup_dir, vmb_dim_sup_esq, vmb_dim_inf_dir, vmb_dim_inf_esq, ((np.squeeze(csr_pontuacao)[csr_iterador]) *100))
-                            # Carega o log para o banco de dados.
-
                             # Desenha a área numa cópia para retorno
                             cv2.rectangle(v_imagem_retorno, (vmb_dim_sup_dir, vmb_dim_inf_dir), (vmb_dim_sup_esq, vmb_dim_inf_esq), (self.QUACK_COR[v_indice_cor]["VERMELHO"], self.QUACK_COR[v_indice_cor]["AZUL"], self.QUACK_COR[v_indice_cor]["VERDE"]), 1)
                             vtmp_texto_imagem   =   str(csr_aprendizado['INDICE'][np.squeeze(csr_classe).astype(np.int32)[csr_iterador]]['name'].capitalize()) + ": " + str(((np.squeeze(csr_pontuacao)[csr_iterador]) *100)) + "%"
                             cv2.putText(v_imagem_retorno, vtmp_texto_imagem, (vmb_dim_sup_dir+20, vmb_dim_inf_dir+20), self.QUACK_FONTE, 1, (self.QUACK_COR[v_indice_cor]["VERMELHO"], self.QUACK_COR[v_indice_cor]["AZUL"], self.QUACK_COR[v_indice_cor]["VERDE"]), 2, cv2.LINE_AA)
                             # Desenha a área numa cópia para retorno
+
+                            # Carega o log para o banco de dados.
+                            self.proc_salva_log(v_imagem,vtmp_imagem, v_imagem_retorno, p_id_sistema_camera, csr_aprendizado['INDICE'][np.squeeze(csr_classe).astype(np.int32)[csr_iterador]]['id'], vmb_dim_sup_dir, vmb_dim_sup_esq, vmb_dim_inf_dir, vmb_dim_inf_esq, ((np.squeeze(csr_pontuacao)[csr_iterador]) *100))
+                            # Carega o log para o banco de dados.
 
                             # Marca a tupla de elemento identificado
                             #v_tmp_imagem_corte          =   self.func_imagem_para_base64(v_imagem[vcx_esquerda:vcx_direita, vcx_alto:vcx_baixo])
@@ -565,7 +579,7 @@ class visao:
                         # Apenas registros dentro dos padrões informados serão tratados
             # Percorrerá o modelo de detecção em busca dos objetos
 
-            return True, v_imagem_retorno
+            return
         except Exception as p_erro:
             # Mais detalhes sobre o erro
             ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
@@ -574,7 +588,7 @@ class visao:
             vtmp_erro   =   '[VISAO][FUNC_INICIA_REC][ERRO][' + str(ecx_dados.tb_lineno) + '] - ' + str(p_erro) + ' | -- | ' + str(ecx_tipo) + ' | -- | ' + str(ecx_dados)  + ' | -- | ' + str(ecx_nome)
             self.quack_arquivo_log(vtmp_erro)
 
-            return False, v_imagem_retorno
+            return
     # Treinamento - Inicia o reconhecimento de características macro
 
     # # --------------------------------------------------------------# #    
@@ -746,7 +760,7 @@ class visao:
     # # --------------------------------------------------------------# #    
 
     # Procedimento para armazenar no banco de dados todos os dados obtidos na detecção
-    def proc_salva_log(self, p_imagem, p_imagem_cortada, p_id_lista_camera, p_id_classe, p_dim_sup_dir, p_dim_sup_esq, p_dim_inf_dir, p_dim_inf_esq, p_probabilidade):
+    def proc_salva_log(self, p_imagem, p_imagem_cortada, p_imagem_tratada, p_id_lista_camera, p_id_classe, p_dim_sup_dir, p_dim_sup_esq, p_dim_inf_dir, p_dim_inf_esq, p_probabilidade):
         try:
             # Imagem para base64
             vtmp_imagem                 =   self.func_imagem_para_base64(p_imagem)
@@ -758,10 +772,16 @@ class visao:
             vtmp_imagem_cortada         =   self.func_imagem_para_base64(p_imagem_cortada)
             if vtmp_imagem_cortada is None:
                 vtmp_imagem_cortada     =   'null'
-            # Imagem para base64            
+            # Imagem para base64
+
+            # Imagem para base64
+            vtmp_imagem_tratada         =   self.func_imagem_para_base64(p_imagem_tratada)
+            if vtmp_imagem_tratada is None:
+                vtmp_imagem_tratada     =   'null'
+            # Imagem para base64
 
             # Salva o novo registro
-            vtmp_dml        =   self.QUACK_CONFIG['Quack']['DB'].salva_log_arquivo(self.QUACK_CONFIG, vtmp_imagem, vtmp_imagem_cortada, p_id_lista_camera, p_id_classe, p_probabilidade, p_dim_sup_esq, p_dim_inf_esq, p_dim_sup_dir, p_dim_inf_dir)
+            vtmp_dml        =   self.QUACK_CONFIG['Quack']['DB'].salva_log_arquivo(self.QUACK_CONFIG, vtmp_imagem, vtmp_imagem_cortada, vtmp_imagem_tratada, p_id_lista_camera, p_id_classe, p_probabilidade, p_dim_sup_esq, p_dim_inf_esq, p_dim_sup_dir, p_dim_inf_dir)
             # Salva o novo registro
         except Exception as p_erro:
             # Mais detalhes sobre o erro
