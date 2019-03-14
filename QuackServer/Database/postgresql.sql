@@ -328,8 +328,8 @@ create table camera_deteccao
    ,dimensao_sup_dir    integer             not null
    ,dimensao_inf_esq    integer             not null
    ,dimensao_inf_dir    integer             not null
-   ,base64              text
-   ,base64_elemento     text
+   ,imagem              bytea
+   ,imagem_cortada      bytea
    ,data_deteccao       timestamp           not null default now()
    ,id_cam_deteccao_ant integer
    ,primary key(id_camera_deteccao)
