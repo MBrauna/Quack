@@ -120,14 +120,14 @@ class quackdb:
 
     # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- #
 
-    def salva_log_arquivo(self, p_configuracao, p_comando, p_base64, p_base64_cortada):
+    def salva_log_arquivo(self, p_configuracao, p_imagem, p_imagem_cortada, p_id_lista_camera, p_id_classe, p_probabilidade, p_dim_sup_esq, p_dim_inf_esq, p_dim_sup_dir, p_dim_inf_dir):
         try:
             # Abre uma sessão no banco de dados
             vtmp_sessao     =   self.quack_conexao.cursor()
             # Abre uma sessão no banco de dados
 
             # Executa a DDL
-            vtmp_sessao.execute(p_comando,(str(p_base64), str(p_base64_cortada),))
+            vtmp_sessao.execute('insert into camera_deteccao(id_lista_camera, id_elemento, probabilidade, dimensao_sup_esq, dimensao_sup_dir, dimensao_inf_esq, dimensao_inf_dir,imagem, imagem_cortada) values (%s,%s,%s,%s,%s,%s,%s,%s,%s)',(p_id_lista_camera,p_id_classe,p_probabilidade,p_dim_sup_esq,p_dim_inf_esq,p_dim_sup_dir,p_dim_inf_dir,p_imagem, p_imagem_cortada))
             # Marca a DDL como sucesso
 
             # Marca o commit

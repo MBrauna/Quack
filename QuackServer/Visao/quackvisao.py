@@ -386,11 +386,7 @@ class visao:
                     if not vmb_reconhecimento:
                         vtmp_erro       =   '[PARADA DETECTADA] - Tentando reconexão com ' + p_texto
                         self.quack_arquivo_log(vtmp_erro)
-                    else:
-                        # Escreve a imagem para visualização
-                        if self.QUACK_CONFIG['Quack']['Exibicao']:
-                            cv2.imshow(p_texto, vtmp_img_tratada)
-                        # Executa o prometeus para detecção
+                    
 
                     ## Monitora as teclas usadas, se clicado "Q" ...
                     if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -610,7 +606,7 @@ class visao:
             ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
             ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
 
-            vtmp_erro   =   '[VISAO][FUNC_BASE64_PARA_IMAGEM][ERRO][' + ecx_dados.tb_lineno + '] - ' + p_erro
+            vtmp_erro   =   '[VISAO][FUNC_BASE64_PARA_IMAGEM][ERRO][' + str(ecx_dados.tb_lineno) + '] - ' + str(p_erro)
             self.quack_arquivo_log(vtmp_erro)
             return None
     # Função - Converte base64 para imagem
@@ -630,7 +626,7 @@ class visao:
             ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
             ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
 
-            vtmp_erro   =   '[VISAO][FUNC_IMAGEM_PARA_BASE64][ERRO][' + ecx_dados.tb_lineno + '] - ' + p_erro
+            vtmp_erro   =   '[VISAO][FUNC_IMAGEM_PARA_BASE64][ERRO][' + str(ecx_dados.tb_lineno) + '] - ' + str(p_erro)
             self.proc_salva_arquivo(vtmp_erro)
             return None
     # Função - Converte Imagem para base64
@@ -765,8 +761,7 @@ class visao:
             # Imagem para base64            
 
             # Salva o novo registro
-            vtmp_comando    =   'insert into camera_deteccao(id_lista_camera, id_elemento, probabilidade, dimensao_sup_esq, dimensao_sup_dir, dimensao_inf_esq, dimensao_inf_dir,base64, base64_elemento) values (' + str(p_id_lista_camera) + ','+str(p_id_classe)+ ','+str(p_probabilidade)+ ','+str(p_dim_sup_esq)+ ','+str(p_dim_inf_esq)+ ','+str(p_dim_sup_dir)+ ','+str(p_dim_inf_dir)+ ',%s,%s)'
-            vtmp_dml        =   self.QUACK_CONFIG['Quack']['DB'].salva_log_arquivo(self.QUACK_CONFIG,vtmp_comando, vtmp_imagem, vtmp_imagem_cortada)
+            vtmp_dml        =   self.QUACK_CONFIG['Quack']['DB'].salva_log_arquivo(self.QUACK_CONFIG, vtmp_imagem, vtmp_imagem_cortada, p_id_lista_camera, p_id_classe, p_probabilidade, p_dim_sup_esq, p_dim_inf_esq, p_dim_sup_dir, p_dim_inf_dir)
             # Salva o novo registro
         except Exception as p_erro:
             # Mais detalhes sobre o erro
