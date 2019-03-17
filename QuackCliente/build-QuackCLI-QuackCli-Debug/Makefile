@@ -353,7 +353,8 @@ compiler_rcc_clean:
 	-$(DEL_FILE) qrc_quack.cpp
 qrc_quack.cpp: ../QuackCLI/quack.qrc \
 		/usr/lib/qt5/bin/rcc \
-		../QuackCLI/QuackLogo/QUACKCli.png
+		../QuackCLI/QuackLogo/Icones/QuackCli.png \
+		../QuackCLI/QuackLogo/Icones/QuackServer.png
 	/usr/lib/qt5/bin/rcc -name quack ../QuackCLI/quack.qrc -o qrc_quack.cpp
 
 compiler_moc_predefs_make_all: moc_predefs.h

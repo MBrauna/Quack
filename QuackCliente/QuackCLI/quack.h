@@ -15,6 +15,11 @@ public:
     explicit Quack(QWidget *parent = 0);
     ~Quack();
 
+private slots:
+    void on_quack_btn_fechar_pressed();
+
+    void on_quack_btn_minimizar_pressed();
+
 private:
     Ui::Quack *ui;
 };

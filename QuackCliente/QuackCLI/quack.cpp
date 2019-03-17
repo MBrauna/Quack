@@ -9,13 +9,22 @@ Quack::Quack(QWidget *parent) :
 
     // Permite que o fundo fique transparente.
     setAttribute(Qt::WA_TranslucentBackground);
-    setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+    setWindowFlags(Qt::FramelessWindowHint);
 
     // ALtera a logo do projeto
-    setWindowIcon(QIcon("Quack/Logo/QUACKCli.png"));
 }
 
 Quack::~Quack()
 {
     delete ui;
+}
+
+void Quack::on_quack_btn_fechar_pressed()
+{
+    Quack::close();
+}
+
+void Quack::on_quack_btn_minimizar_pressed()
+{
+    Quack::showMinimized();
 }

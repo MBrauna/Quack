@@ -12,90 +12,52 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>478</width>
-    <height>139</height>
+    <width>523</width>
+    <height>632</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true">Quack</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>:/Quack/Logo/QuackLogo/QUACKCli.png</normaloff>:/Quack/Logo/QuackLogo/QUACKCli.png</iconset>
+  </property>
   <property name="styleSheet">
-   <string notr="true">background-color: none;</string>
+   <string notr="true"/>
   </property>
   <property name="locale">
    <locale language="Portuguese" country="Brazil"/>
   </property>
-  <widget class="QPushButton" name="quack_btn_site">
+  <widget class="QFrame" name="frame_2">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>30</y>
-     <width>111</width>
-     <height>101</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="icon">
-    <iconset resource="quack.qrc">
-     <normaloff>:/Quack/Logo/QuackLogo/QUACKCli.png</normaloff>:/Quack/Logo/QuackLogo/QUACKCli.png</iconset>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>110</width>
-     <height>110</height>
-    </size>
-   </property>
-  </widget>
-  <widget class="QGroupBox" name="quack_gb_acesso">
-   <property name="geometry">
-    <rect>
-     <x>130</x>
-     <y>9</y>
-     <width>341</width>
-     <height>121</height>
+     <y>10</y>
+     <width>501</width>
+     <height>61</height>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">border-color: rgb(52, 101, 164);</string>
+    <string notr="true">background-color: qlineargradient(spread:pad, x1:0.607, y1:0.0626364, x2:0.637, y2:0.609, stop:0.840796 rgba(0, 0, 0, 169), stop:1 rgba(25, 25, 25, 169));</string>
    </property>
-   <property name="title">
-    <string>Acesso</string>
+   <property name="frameShape">
+    <enum>QFrame::WinPanel</enum>
    </property>
-   <widget class="QLineEdit" name="quack_senha">
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>50</y>
-      <width>156</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-    <property name="placeholderText">
-     <string>Senha de acesso</string>
-    </property>
-   </widget>
+   <property name="frameShadow">
+    <enum>QFrame::Plain</enum>
+   </property>
    <widget class="QLineEdit" name="quack_usuario">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>50</y>
-      <width>157</width>
+      <y>20</y>
+      <width>191</width>
       <height>25</height>
      </rect>
     </property>
-    <property name="inputMask">
-     <string/>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -104,22 +66,179 @@
      <string>Usuário Quack</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="quack_btn_acesso">
+   <widget class="QLineEdit" name="quack_senha">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>80</y>
-      <width>319</width>
+      <x>210</x>
+      <y>20</y>
+      <width>221</width>
       <height>25</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="placeholderText">
+     <string>Senha Quack</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="quack_iniciar">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>20</y>
+      <width>41</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: none;
+background-color: none;</string>
+    </property>
     <property name="text">
-     <string>Acessar</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="quack.qrc">
+      <normaloff>:/Quack/Logo/QuackLogo/Icones/Button Next.png</normaloff>
+      <activeoff>:/Quack/Logo/QuackLogo/Icones/Button Refresh.png</activeoff>:/Quack/Logo/QuackLogo/Icones/Button Next.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>30</width>
+      <height>30</height>
+     </size>
     </property>
    </widget>
   </widget>
+  <widget class="QPushButton" name="quack_btn_minimizar">
+   <property name="geometry">
+    <rect>
+     <x>470</x>
+     <y>0</y>
+     <width>21</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border: none;</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="quack.qrc">
+     <normaloff>:/Quack/Logo/QuackLogo/Icones/Button Delete.png</normaloff>:/Quack/Logo/QuackLogo/Icones/Button Delete.png</iconset>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="quack_btn_fechar">
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>0</y>
+     <width>21</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border: none;</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="quack.qrc">
+     <normaloff>:/Quack/Logo/QuackLogo/Icones/Button Close.png</normaloff>:/Quack/Logo/QuackLogo/Icones/Button Close.png</iconset>
+   </property>
+  </widget>
+  <widget class="QToolBox" name="quack_frame">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>110</y>
+     <width>501</width>
+     <height>511</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: qlineargradient(spread:pad, x1:0.607, y1:0.0626364, x2:0.637, y2:0.609, stop:0.840796 rgba(0, 0, 0, 169), stop:1 rgba(25, 25, 25, 169));
+color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="lineWidth">
+    <number>1</number>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="page">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>501</width>
+      <height>449</height>
+     </rect>
+    </property>
+    <attribute name="label">
+     <string>Page 1</string>
+    </attribute>
+   </widget>
+   <widget class="QWidget" name="page_2">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>501</width>
+      <height>449</height>
+     </rect>
+    </property>
+    <attribute name="label">
+     <string>Page 2</string>
+    </attribute>
+   </widget>
+  </widget>
+  <widget class="QComboBox" name="quack_cb_aplicacao">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>80</y>
+     <width>501</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(0, 0, 0);</string>
+   </property>
+   <item>
+    <property name="text">
+     <string>Quack Servidor</string>
+    </property>
+    <property name="icon">
+     <iconset resource="quack.qrc">
+      <normaloff>:/Quack/Icones/QuackLogo/Icones/QuackServer.png</normaloff>:/Quack/Icones/QuackLogo/Icones/QuackServer.png</iconset>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Quack Cliente</string>
+    </property>
+    <property name="icon">
+     <iconset resource="quack.qrc">
+      <normaloff>:/Quack/Icones/QuackLogo/Icones/QuackCli.png</normaloff>:/Quack/Icones/QuackLogo/Icones/QuackCli.png</iconset>
+    </property>
+   </item>
+  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>quack_btn_minimizar</tabstop>
+  <tabstop>quack_btn_fechar</tabstop>
+  <tabstop>quack_usuario</tabstop>
+  <tabstop>quack_cb_aplicacao</tabstop>
+  <tabstop>quack_iniciar</tabstop>
+  <tabstop>quack_senha</tabstop>
+ </tabstops>
  <resources>
   <include location="quack.qrc"/>
  </resources>
