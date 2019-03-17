@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2019-03-17T01:13:23
+# Project created by QtCreator 2019-03-17T02:16:53
 #
 #-------------------------------------------------
 
@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = QuackCli
+TARGET = QuackCLI
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -25,10 +25,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        quackvisual.cpp
+        quack.cpp
 
 HEADERS += \
-        quackvisual.h
+        quack.h
 
 FORMS += \
-        quackvisual.ui
+        quack.ui
+
+RESOURCES += \
+    quack.qrc

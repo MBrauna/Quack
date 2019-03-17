@@ -1,11 +1,11 @@
-#include "quackvisual.h"
+#include "quack.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QuackVisual w;
-    w.show();
+    Quack quackprincipal;
+    quackprincipal.show();
 
     return a.exec();
 }

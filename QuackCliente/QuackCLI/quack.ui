@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Quack</class>
+ <widget class="QWidget" name="Quack">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>478</width>
+    <height>139</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string notr="true">Quack</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: none;</string>
+  </property>
+  <property name="locale">
+   <locale language="Portuguese" country="Brazil"/>
+  </property>
+  <widget class="QPushButton" name="quack_btn_site">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>30</y>
+     <width>111</width>
+     <height>101</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="quack.qrc">
+     <normaloff>:/Quack/Logo/QuackLogo/QUACKCli.png</normaloff>:/Quack/Logo/QuackLogo/QUACKCli.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>110</width>
+     <height>110</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="quack_gb_acesso">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>9</y>
+     <width>341</width>
+     <height>121</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-color: rgb(52, 101, 164);</string>
+   </property>
+   <property name="title">
+    <string>Acesso</string>
+   </property>
+   <widget class="QLineEdit" name="quack_senha">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>50</y>
+      <width>156</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="placeholderText">
+     <string>Senha de acesso</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="quack_usuario">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>157</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="inputMask">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="placeholderText">
+     <string>Usuário Quack</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="quack_btn_acesso">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>80</y>
+      <width>319</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Acessar</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="quack.qrc"/>
+ </resources>
+ <connections/>
+</ui>
