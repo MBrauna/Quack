@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Humano</folder>
+	<filename>mulher-deitada-no-sofa-enquanto-ve-um-painel_13339-7969.jpg</filename>
+	<path>/home/mbrauna/Documents/Quack/QuackTreino/Imagem/Humano/mulher-deitada-no-sofa-enquanto-ve-um-painel_13339-7969.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>626</width>
+		<height>417</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Humano</name>
+		<pose>Unspecified</pose>
+		<truncated>1</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>1</xmin>
+			<ymin>174</ymin>
+			<xmax>592</xmax>
+			<ymax>364</ymax>
+		</bndbox>
+	</object>
+</annotation>

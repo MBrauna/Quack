@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Humano</folder>
+	<filename>web3-lonely-man-beach-prayer.jpg</filename>
+	<path>/home/mbrauna/Documents/Quack/QuackTreino/Imagem/Humano/web3-lonely-man-beach-prayer.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>0</width>
+		<height>0</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Humano</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>260</xmin>
+			<ymin>80</ymin>
+			<xmax>347</xmax>
+			<ymax>249</ymax>
+		</bndbox>
+	</object>
+</annotation>

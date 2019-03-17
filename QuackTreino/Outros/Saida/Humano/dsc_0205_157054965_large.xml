@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Humano</folder>
+	<filename>dsc_0205_157054965_large.jpg</filename>
+	<path>/home/mbrauna/Documents/Quack/QuackTreino/Imagem/Humano/dsc_0205_157054965_large.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>500</width>
+		<height>335</height>
+		<depth>1</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Humano</name>
+		<pose>Unspecified</pose>
+		<truncated>1</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>163</xmin>
+			<ymin>75</ymin>
+			<xmax>345</xmax>
+			<ymax>335</ymax>
+		</bndbox>
+	</object>
+</annotation>

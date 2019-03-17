@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Humano</folder>
+	<filename>indexas87da78syd.jpeg</filename>
+	<path>/home/mbrauna/Documents/Quack/QuackTreino/Imagem/Humano/indexas87da78syd.jpeg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>275</width>
+		<height>183</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Humano</name>
+		<pose>Unspecified</pose>
+		<truncated>1</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>1</xmin>
+			<ymin>8</ymin>
+			<xmax>175</xmax>
+			<ymax>183</ymax>
+		</bndbox>
+	</object>
+</annotation>

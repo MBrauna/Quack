@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Humano</folder>
+	<filename>morador%20de%20rua%201_0.webp</filename>
+	<path>/home/mbrauna/Documents/Quack/QuackTreino/Imagem/Humano/morador%20de%20rua%201_0.webp</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>640</width>
+		<height>427</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Humano</name>
+		<pose>Unspecified</pose>
+		<truncated>1</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>1</xmin>
+			<ymin>139</ymin>
+			<xmax>355</xmax>
+			<ymax>304</ymax>
+		</bndbox>
+	</object>
+</annotation>

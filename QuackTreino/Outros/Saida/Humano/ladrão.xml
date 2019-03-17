@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Humano</folder>
+	<filename>ladrão.png</filename>
+	<path>/home/mbrauna/Documents/Quack/QuackTreino/Imagem/Humano/ladrão.png</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>1250</width>
+		<height>610</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Humano</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>611</xmin>
+			<ymin>152</ymin>
+			<xmax>792</xmax>
+			<ymax>426</ymax>
+		</bndbox>
+	</object>
+</annotation>

@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Humano</folder>
+	<filename>Não-confunda-pessoas-curiosas-com-pessoas-solidárias…-muito-cuidado-830x450.jpg</filename>
+	<path>/home/mbrauna/Documents/Quack/QuackTreino/Imagem/Humano/Não-confunda-pessoas-curiosas-com-pessoas-solidárias…-muito-cuidado-830x450.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>0</width>
+		<height>0</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Humano</name>
+		<pose>Unspecified</pose>
+		<truncated>1</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>311</xmin>
+			<ymin>1</ymin>
+			<xmax>828</xmax>
+			<ymax>450</ymax>
+		</bndbox>
+	</object>
+</annotation>

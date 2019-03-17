@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Humano</folder>
+	<filename>rihanna_1_twitter.jpg</filename>
+	<path>/home/mbrauna/Documents/Quack/QuackTreino/Imagem/Humano/rihanna_1_twitter.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>304</width>
+		<height>405</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Humano</name>
+		<pose>Unspecified</pose>
+		<truncated>1</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>132</xmin>
+			<ymin>172</ymin>
+			<xmax>304</xmax>
+			<ymax>401</ymax>
+		</bndbox>
+	</object>
+</annotation>
