@@ -17,7 +17,7 @@ CREATE TABLE cliente
   ,CONSTRAINT ck_cliente_vip        CHECK (vip in (0,1))
   ,CONSTRAINT ck_cliente_tppessoa   CHECK (tipo_pessoa in (0,1))
   ,CONSTRAINT ck_cliente_admin      CHECK (admin in (0,1))
-  ,constraint fk_cliente_user       foreign key(id_usuario) references user(id)
+  ,constraint fk_cliente_user       foreign key(id_usuario) references users(id)
 );
 
 comment on column cliente.id_cliente    is 'Código único - SEQUENCIAL DO CLIENTE';
@@ -28,7 +28,6 @@ comment on column cliente.admin         is '[0] - Não, [1] - Sim';
 comment on column cliente.chave_acesso  is 'Chave de acesso do cliente - Código único';
 comment on table  cliente               is 'Tabela de clientes - Toda pessoa física ou jurídica que por algum motivo iteragir com a aplicação deverá ser cadastrada nesta tabela';
 
-create index idx_cliente_nome           on cliente(nome asc nulls last);
 create index idx_cliente_cnpj_cpf       on cliente(cnpj_cpf asc nulls last);
 create index idx_cliente_tpessoa        on cliente(tipo_pessoa asc nulls last);
 create index idx_cliente_dtcadastro     on cliente(data_cadastro asc nulls last);
