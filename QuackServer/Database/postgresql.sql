@@ -1,30 +1,26 @@
 -----------------------------------------------------------------------------------------
-create database quackserver with encoding='utf8' connection limit=-1;
------------------------------------------------------------------------------------------
 create sequence seq_cliente increment 1 start 1 minvalue 1 maxvalue 999999999;
 
 CREATE TABLE cliente
 (
    id_cliente       integer                     NOT NULL
-  ,nome             text                        NOT NULL
-  ,nome_fantasia    text
   ,cnpj_cpf         integer
   ,tipo_pessoa      integer                     NOT NULL DEFAULT 0
   ,data_cadastro    timestamp without time zone NOT NULL DEFAULT now()
   ,vip              integer                     NOT NULL DEFAULT 0
   ,admin            integer                     NOT NULL DEFAULT 0
   ,chave_acesso     text                        NOT NULL
+  ,id_usuario       integer                     NOT NULL
   ,CONSTRAINT pk_cliente            PRIMARY KEY (id_cliente)
   ,CONSTRAINT uk_cliente_cnpjcpf    UNIQUE (cnpj_cpf)
   ,CONSTRAINT uk_cliente_chave      UNIQUE (chave_acesso)
   ,CONSTRAINT ck_cliente_vip        CHECK (vip in (0,1))
   ,CONSTRAINT ck_cliente_tppessoa   CHECK (tipo_pessoa in (0,1))
   ,CONSTRAINT ck_cliente_admin      CHECK (admin in (0,1))
+  ,constraint fk_cliente_user       foreign key(id_usuario) references user(id)
 );
 
 comment on column cliente.id_cliente    is 'Código único - SEQUENCIAL DO CLIENTE';
-comment on column cliente.nome          is 'Nome do cliente - Se pessoa jurídica nome real.';
-comment on column cliente.nome_fantasia is 'Nome fantasia ou apelido do cliente';
 comment on column cliente.cnpj_cpf      is 'Código de cadastro à receita federal';
 comment on column cliente.tipo_pessoa   is '[0] - Pessoa física, [1] - Pessoa Jurídica';
 comment on column cliente.vip           is '[0] - Não, [1] - Sim';
@@ -265,6 +261,8 @@ $BODY$begin
   else
     raise info 'Não foi possível realizar a operação! %', now();
   end if;
+
+  return new;
 end;$BODY$
 LANGUAGE plpgsql VOLATILE NOT LEAKPROOF;
 
@@ -374,6 +372,8 @@ begin
   end;
   new.data_deteccao       := now();
   new.id_cam_deteccao_ant := v_ult_id_deteccao;
+
+  return new;
 end;$BODY$
 LANGUAGE plpgsql VOLATILE NOT LEAKPROOF;
 
