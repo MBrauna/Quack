@@ -13,6 +13,20 @@
 
 
 
+
+@section('conteudo')
+    <section class="content content--layout">
+        <h2 class="word word--playful">Quack!</h2>
+    </section>
+@endsection
+
+
+
+
+
+
+
+
 @section('menu')
                     <li>
                         <a href="#menu">
@@ -63,17 +77,6 @@
                         </a>
                     </li>
 @endsection
-
-
-
-
-
-@section('conteudo')
-    <section class="content content--layout">
-        <h2 class="word word--playful">Quack!</h2>
-    </section>
-@endsection
-
 
 
 

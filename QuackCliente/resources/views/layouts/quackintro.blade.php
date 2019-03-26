@@ -21,18 +21,19 @@
         <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
         <!-- Para fontes -->
 
-        <!-- CSS Dinâmico -->
+                <!-- CSS Dinâmico -->
         @yield('css_dinamico')
         <!-- CSS DInâmico -->
-
 
         <!-- CSS/JS Arquivos fixos -->
         <link rel="stylesheet" type="text/css" href="Quack/Menu/css/default.css" />
         <link rel="stylesheet" type="text/css" href="Quack/Menu/css/component.css" />
+        <link rel="stylesheet" type="text/css" href="Quack/Quack/topo.css" />
 
 
         <script src="Quack/Menu/js/modernizr.custom.js"></script>
         <!-- CSS/JS Arquivos fixos -->
+
     </head>
     <body id="topo">
         <!-- Carregamento da carta de apresentação -->
@@ -52,6 +53,7 @@
         <!-- Carrega os scripts dinamicamente -->
         @yield('scripts')
         <!-- Carrega os scripts dinamicamente -->
+
 
         <!-- Scripts Fixos -->
         <script>
