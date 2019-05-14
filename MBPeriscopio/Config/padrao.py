@@ -37,14 +37,15 @@ DA CONFIGURAÇÃO (#).
 [2] -   MongoDB
 [3] -   SQL Server
 [4] -   Oracle
-[5] -   Cassandra 
+[5] -   Cassandra
+[6] -   SQLite
 '''
 MBRAUNA_DB_TIPO             =   0
 MBRAUNA_DB_HOSPEDEIRO       =   'localhost'
-MBRAUNA_DB_PORTA            =   5432
-MBRAUNA_DB_USUARIO          =   'postgres'
-MBRAUNA_DB_SENHA            =   'ABC123abc.'
-MBRAUNA_DB_BANCO            =   'P3r1sc0p10*'
+MBRAUNA_DB_PORTA            =   None
+MBRAUNA_DB_USUARIO          =   'periscopio'
+MBRAUNA_DB_SENHA            =   'P3r1sc0p10*'
+MBRAUNA_DB_BANCO            =   'MBraunaPeriscopio'
 
 # Token para acesso ao banco de dados externo
 # Sem essa informação será impossível comunicar qualquer eventualidade.
