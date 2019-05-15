@@ -64,12 +64,12 @@ class mb_sqlite:
         '''
         try:
             # Marca a configuração necessária para a inicialização da conexão
-            self.MBRAUNA_CONFIGURACAO       =   p_configuracao
+            self.MBRAUNA_CONFIGURACAO               =   p_configuracao
             # Marca a configuração necessária para a inicialização da conexão
 
             # Cria a conexão com o banco de dados SQLite
-            MBRAUNA_CONEXAO                 =   sqlite.connect(self.func_caminho())
-            MBRAUNA_CONEXAO.isolation_level =   None
+            self.MBRAUNA_CONEXAO                    =   sqlite.connect(self.func_caminho())
+            self.MBRAUNA_CONEXAO.isolation_level    =   None
             # Cria a conexão com o banco de dados SQLite
 
 
@@ -94,6 +94,66 @@ class mb_sqlite:
 
             return os.path.abspath(os.path.join(v_tmp_caminho,r'./DB/Periscopio.db'))
         except Exception as e:
+            # Mais detalhes sobre o erro
+            ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
+            ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
+            # Mais detalhes sobre o erro
+
             return None
     
     # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- #
+
+    def func_executa_ddl(p_script):
+        '''
+        Autor: Michel Brauna                            Data: 12/01/2011
+                  Classe para execução de comandos via sqlite.          
+        '''
+        try:
+            v_conexao   = self.MBRAUNA_CONEXAO.cursor()
+            v_conexao.execute(p_script)
+            v_conexao.close()
+        except Exception as e:
+            # Mais detalhes sobre o erro
+            ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
+            ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
+            # Mais detalhes sobre o erro
+    
+    # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- #
+
+    def func_executa_dml(p_script):
+        '''
+        Autor: Michel Brauna                            Data: 12/01/2011
+                  Classe para execução de comandos via sqlite.          
+        '''
+        try:
+            v_conexao   = self.MBRAUNA_CONEXAO.cursor()
+            v_conexao.execute(p_script)
+            v_conexao.commit()
+            v_conexao.close()
+        except Exception as e:
+            # Mais detalhes sobre o erro
+            ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
+            ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
+            # Mais detalhes sobre o erro
+    
+    # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- #
+
+    def func_executa_dql(p_script):
+        '''
+        Autor: Michel Brauna                            Data: 12/01/2011
+                  Classe para execução de comandos via sqlite.          
+        '''
+        try:
+            v_conexao   =   self.MBRAUNA_CONEXAO.cursor()
+            v_conexao.execute(p_script)
+            v_retorno   =   v_conexao.fetchone()
+            v_conexao.close()
+
+            return v_retorno
+        except Exception as e:
+            # Mais detalhes sobre o erro
+            ecx_tipo, ecx_obj, ecx_dados    =   sys.exc_info()
+            ecx_nome                        =   os.path.split(ecx_dados.tb_frame.f_code.co_filename)[1]
+            # Mais detalhes sobre o erro
+
+            return None
