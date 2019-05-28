@@ -38,13 +38,26 @@ class propheties:
     # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- # -- #
 
     def funcao_treino(self, p_lista, p_resultado, p_camada_oculta):
+        # Verifica se os parametros informados são do tipo esperado
+        # Verifica se os parametros informados são do tipo esperado
+
         # Coleta os dados do tamanho da lista para tratamento
         v_tamanho_lista     =   len(p_lista)
         v_qtde_entrada      =   len(p_lista[0])
         # Coleta os dados do tamanho da lista para tratamento
 
+        # Antes de iniciar devo gerar informações aleatórias de pesos
+        if p_camada_oculta > 0:
+            
+        # Antes de iniciar devo gerar informações aleatórias de pesos
+
         # Verifica a quantidade de entradas iniciais
         for cur_epoca in range(self.VMB_EPOCA):
+
+            # Trabalha com cada dado de entrada
+            for cur_lista in range(len(p_lista)):
+
+            # Trabalha com cada dado de entrada
         # [FIM] - for cur_epoca in range(self.VMB_EPOCA):
         # Verifica a quantidade de entradas iniciais
 
