@@ -1,0 +1,113 @@
+{
+    "module"        :   "appList"
+   ,"app"           :   [
+                            {
+                                "appID"         :   "MegaModaPark"
+                               ,"appName"       :   "Mega Moda Park"
+                               ,"Style"         :   [
+                                                        {
+                                                            "name"  :   "Primary"
+                                                           ,"color" :   "#2979FF"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "PrimaryVariant"
+                                                           ,"color" :   "#0D47A1"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "Secondary"
+                                                           ,"color" :   "#FF6D00"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "SecondaryVariant"
+                                                           ,"color" :   "#FB8C00"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "Background"
+                                                           ,"color" :   "#ECEFF1"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "Surface"
+                                                           ,"color" :   "#FFFFFF"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "Error"
+                                                           ,"color" :   "#D50000"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "onPrimary"
+                                                           ,"color" :   "#42A5F5"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "onSecondary"
+                                                           ,"color" :   "#FF9800"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "onBackground"
+                                                           ,"color" :   "#EEEEEE"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "onSurface"
+                                                           ,"color" :   "#E3F2FD"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "onError"
+                                                           ,"color" :   "#B71C1C"
+                                                        }
+                                                    ]
+                            }
+                           ,{
+                                "appID"         :   "MegaModaHotel"
+                               ,"appName"       :   "Mega Moda Hotel"
+                               ,"Style"         :   [
+                                                        {
+                                                            "name"  :   "Primary"
+                                                           ,"color" :   "#fff000"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "PrimaryVariant"
+                                                           ,"color" :   "#fff000"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "Secondary"
+                                                           ,"color" :   "#fff000"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "SecondaryVariant"
+                                                           ,"color" :   "#fff000"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "Background"
+                                                           ,"color" :   "#fff000"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "Surface"
+                                                           ,"color" :   "#fff000"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "Error"
+                                                           ,"color" :   "#fff000"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "onPrimary"
+                                                           ,"color" :   "#fff000"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "onSecondary"
+                                                           ,"color" :   "#fff000"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "onBackground"
+                                                           ,"color" :   "#fff000"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "onSurface"
+                                                           ,"color" :   "#fff000"
+                                                        }
+                                                       ,{
+                                                            "name"  :   "onError"
+                                                           ,"color" :   "#fff000"
+                                                        }
+                                                    ]
+                            }
+                        ]
+}
